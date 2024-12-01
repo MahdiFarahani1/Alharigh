@@ -1,9 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Core/utils/esay_size.dart';
+import 'package:flutter_application_1/Core/widgets/divider.dart';
 import 'package:flutter_application_1/Features/Settings/presentation/bloc/setting_cubit.dart';
 import 'package:flutter_application_1/Features/Settings/presentation/bloc/settings_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -38,6 +40,7 @@ class SettingsPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
+                CustomDivider.divier(),
                 _buildSectionTitle('حجم الخط:'),
                 Row(
                   children: [
@@ -56,6 +59,7 @@ class SettingsPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
+                CustomDivider.divier(),
                 _buildSectionTitle('تباعد الأسطر:'),
                 Row(
                   children: [
@@ -74,6 +78,7 @@ class SettingsPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
+                CustomDivider.divier(),
                 _buildSectionTitle('نوع الخط:'),
                 DropdownButton<String>(
                   value: state.selectedFont,
@@ -85,6 +90,7 @@ class SettingsPage extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 16),
+                CustomDivider.divier(),
                 _buildSectionTitle('لون الخلفية:'),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -95,6 +101,33 @@ class SettingsPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
+                CustomDivider.divier(),
+                _buildSectionTitle('الوضع الليلي:'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(FontAwesomeIcons.moon),
+                    EsaySize.gap(8),
+                    BlocBuilder<SettingsCubit, SettingsState>(
+                      builder: (context, state) {
+                        return Switch(
+                          value: state.isLightMode,
+                          onChanged: (value) {
+                            BlocProvider.of<SettingsCubit>(context)
+                                .changeThemeMode(value);
+                          },
+                          activeColor: Colors.amber,
+                          inactiveTrackColor: Colors.grey.shade700,
+                          inactiveThumbColor: Colors.grey.shade900,
+                        );
+                      },
+                    ),
+                    EsaySize.gap(8),
+                    const Icon(FontAwesomeIcons.sun),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                CustomDivider.divier(),
                 _buildSectionTitle('عرض الصفحة:'),
                 Column(
                   children: [

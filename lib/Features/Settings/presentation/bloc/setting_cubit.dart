@@ -14,6 +14,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   void changeFont(String font) => emit(state.copyWith(selectedFont: font));
   void changeBackgroundColor(Color color) =>
       emit(state.copyWith(selectedBackgroundColor: color));
+  void changeThemeMode(bool value) => emit(state.copyWith(isLightMode: value));
   void changePageOrientation(String orientation) => emit(state.copyWith(
       pageOrientation: orientation,
       axix: state.axix == Axis.horizontal ? Axis.vertical : Axis.horizontal));

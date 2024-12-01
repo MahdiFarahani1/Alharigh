@@ -8,6 +8,7 @@ class SettingsState {
   final Color selectedBackgroundColor;
   final String pageOrientation;
   final Axis axix;
+  final bool isLightMode;
 
   SettingsState(
       {this.selectedTheme = 'روشن',
@@ -16,7 +17,8 @@ class SettingsState {
       this.selectedFont = 'بهیج',
       this.selectedBackgroundColor = Colors.white,
       this.pageOrientation = 'عمودی',
-      this.axix = Axis.horizontal});
+      this.axix = Axis.horizontal,
+      this.isLightMode = true});
 
   SettingsState copyWith({
     String? selectedTheme,
@@ -26,6 +28,7 @@ class SettingsState {
     Color? selectedBackgroundColor,
     String? pageOrientation,
     Axis? axix,
+    bool? isLightMode,
   }) {
     return SettingsState(
       selectedTheme: selectedTheme ?? this.selectedTheme,
@@ -36,6 +39,7 @@ class SettingsState {
           selectedBackgroundColor ?? this.selectedBackgroundColor,
       pageOrientation: pageOrientation ?? this.pageOrientation,
       axix: axix ?? this.axix,
+      isLightMode: isLightMode ?? this.isLightMode,
     );
   }
 }

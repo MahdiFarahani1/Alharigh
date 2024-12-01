@@ -45,6 +45,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/download.svg
   String get download => 'assets/images/download.svg';
 
+  /// File path: assets/images/item.png
+  AssetGenImage get item => const AssetGenImage('assets/images/item.png');
+
   /// File path: assets/images/list-check.svg
   String get listCheck => 'assets/images/list-check.svg';
 
@@ -54,6 +57,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/search.svg
   String get search => 'assets/images/search.svg';
 
+  /// File path: assets/images/tlib.png
+  AssetGenImage get tlib => const AssetGenImage('assets/images/tlib.png');
+
   /// List of all assets
   List<dynamic> get values => [
         bookDownload,
@@ -62,9 +68,11 @@ class $AssetsImagesGen {
         bookmark2,
         bookmarkhome,
         download,
+        item,
         listCheck,
         menu,
-        search
+        search,
+        tlib
       ];
 }
 
