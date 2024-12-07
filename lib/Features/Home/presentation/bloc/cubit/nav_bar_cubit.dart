@@ -6,16 +6,17 @@ import 'package:flutter_application_1/Features/LoadedBooks/presentation/download
 import 'package:flutter_application_1/Features/LoadedBooks/presentation/loadedbook_page.dart';
 
 class NavBarCubit extends Cubit<int> {
-  NavBarCubit() : super(0);
+  NavBarCubit() : super(2);
 
   List widgets = [
     Container(height: 200, color: Colors.purple),
-    DownloadedBookListPage(),
-    const LoadedbookPage(),
+    const DownloadedBookListPage(),
+    LoadedbookPage(),
     const AllBooksPage(),
     const GroupsBookPage(),
   ];
-  Widget getCurrentSliver(int index) {
+
+  Widget getCurrentPage(int index) {
     return widgets[index];
   }
 

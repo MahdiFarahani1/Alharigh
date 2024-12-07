@@ -1,51 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Core/utils/esay_size.dart';
-import 'package:flutter_application_1/gen/assets.gen.dart';
+import 'package:flutter_application_1/Features/LoadedBooks/presentation/widget/loadedbook_item.dart';
 
 class LoadedbookPage extends StatelessWidget {
-  const LoadedbookPage({super.key});
+  final List categoryName = [
+    'کتگوری اول',
+    'کتگوری دوم',
+    'کتگوری سوم',
+    'کتگوری چهارم',
+    'کتگوری پنجم'
+  ];
+
+  final List numberBooks = [2, 4, 1, 6, 8];
+
+  LoadedbookPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Assets.images.tlib.image(),
-            Positioned(
-                top: -125,
-                left: 0,
-                child: Assets.images.item.image(width: 140, height: 140)),
-            Positioned(
-                top: -125,
-                left: 0,
-                right: 0,
-                child: Assets.images.item.image(width: 140, height: 140)),
-            Positioned(
-                top: -125,
-                right: 0,
-                child: Assets.images.item.image(width: 140, height: 140)),
-            Positioned(
-                top: -190,
-                right: 6,
-                child: Container(
-                    alignment: Alignment.centerRight,
-                    width: EsaySize.width(context) / 1.5,
-                    height: 30,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .floatingActionButtonTheme
-                            .backgroundColor,
-                        borderRadius: BorderRadius.circular(12)),
-                    child: const Padding(
-                      padding: EdgeInsets.only(right: 12),
-                      child: Text(
-                        'کتگوری 1',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ))),
-          ],
+      body: Directionality(
+        textDirection: TextDirection.rtl,
+        child: ListView.builder(
+          itemCount: numberBooks.length,
+          itemBuilder: (context, index) {
+            return LoadedbookItem(
+                numberBook: numberBooks[index],
+                categoryName: categoryName[index]);
+          },
         ),
       ),
     );

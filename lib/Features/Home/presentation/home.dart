@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
       body: BlocBuilder<NavBarCubit, int>(
         builder: (context, state) {
           final cubit = context.read<NavBarCubit>();
-          return cubit.getCurrentSliver(state);
+          return cubit.getCurrentPage(state);
         },
       ),
       bottomNavigationBar: const NavBarHome(),

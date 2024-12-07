@@ -29,6 +29,7 @@ class SettingsPage extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               children: [
                 _buildSectionTitle('الألوان:'),
+                EsaySize.gap(12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -46,13 +47,16 @@ class SettingsPage extends StatelessWidget {
                   children: [
                     const Icon(Icons.text_fields),
                     Expanded(
-                      child: Slider(
-                        value: state.fontSize,
-                        min: 10,
-                        max: 30,
-                        divisions: 20,
-                        label: state.fontSize.toString(),
-                        onChanged: cubit.changeFontSize,
+                      child: SliderTheme(
+                        data: themeSlider(),
+                        child: Slider(
+                          value: state.fontSize,
+                          min: 10,
+                          max: 30,
+                          divisions: 20,
+                          label: state.fontSize.toString(),
+                          onChanged: cubit.changeFontSize,
+                        ),
                       ),
                     ),
                     Text(state.fontSize.toStringAsFixed(0)),
@@ -65,13 +69,16 @@ class SettingsPage extends StatelessWidget {
                   children: [
                     const Icon(Icons.format_line_spacing),
                     Expanded(
-                      child: Slider(
-                        value: state.lineSpacing,
-                        min: 1,
-                        max: 3,
-                        divisions: 20,
-                        label: state.lineSpacing.toStringAsFixed(1),
-                        onChanged: cubit.changeLineSpacing,
+                      child: SliderTheme(
+                        data: themeSlider(),
+                        child: Slider(
+                          value: state.lineSpacing,
+                          min: 1,
+                          max: 3,
+                          divisions: 20,
+                          label: state.lineSpacing.toStringAsFixed(1),
+                          onChanged: cubit.changeLineSpacing,
+                        ),
                       ),
                     ),
                     Text(state.lineSpacing.toStringAsFixed(1)),
@@ -110,15 +117,18 @@ class SettingsPage extends StatelessWidget {
                     EsaySize.gap(8),
                     BlocBuilder<SettingsCubit, SettingsState>(
                       builder: (context, state) {
-                        return Switch(
-                          value: state.isLightMode,
-                          onChanged: (value) {
-                            BlocProvider.of<SettingsCubit>(context)
-                                .changeThemeMode(value);
-                          },
-                          activeColor: Colors.amber,
-                          inactiveTrackColor: Colors.grey.shade700,
-                          inactiveThumbColor: Colors.grey.shade900,
+                        return Transform.scale(
+                          scale: 0.75,
+                          child: Switch(
+                            value: state.isLightMode,
+                            onChanged: (value) {
+                              BlocProvider.of<SettingsCubit>(context)
+                                  .changeThemeMode(value);
+                            },
+                            activeColor: Colors.amber,
+                            inactiveTrackColor: Colors.grey.shade700,
+                            inactiveThumbColor: Colors.grey.shade900,
+                          ),
                         );
                       },
                     ),
@@ -194,6 +204,13 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
+  SliderThemeData themeSlider() {
+    return const SliderThemeData(
+        valueIndicatorTextStyle: TextStyle(color: Colors.white, fontSize: 12),
+        trackHeight: 2,
+        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 5));
+  }
+
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
@@ -207,11 +224,11 @@ class SettingsPage extends StatelessWidget {
     return GestureDetector(
       onTap: () => cubit.changeBackgroundColor(color),
       child: Container(
-        width: 40,
-        height: 40,
+        width: 30,
+        height: 30,
         decoration: BoxDecoration(
           color: color,
-          shape: BoxShape.circle,
+          shape: BoxShape.rectangle,
           border: Border.all(
             color: state.selectedBackgroundColor == color
                 ? Colors.black
