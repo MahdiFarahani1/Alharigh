@@ -2,27 +2,40 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-class DBhelperBook {
-  Future initDb() async {
+class DBhelperBookList {
+  Future<Database> initDb() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, "booklist.sqlite");
 
-    final exist = await databaseExists(path);
-
-    if (exist) {
+    if (await databaseExists(path)) {
+      return _openDatabase(path);
     } else {
-      try {
-        await Directory(dirname(path)).create(recursive: true);
-      } catch (_) {}
-      ByteData data =
-          await rootBundle.load(join("assets/database", "booklist.sqlite"));
-      List<int> bytes =
+      final Directory appDocumentsDir =
+          await getApplicationDocumentsDirectory();
+      final filePath = join(appDocumentsDir.path, "booklist.sqlite");
+
+      await Directory(dirname(filePath)).create(recursive: true);
+
+      final ByteData data =
+          await rootBundle.load('assets/database/booklist.sqlite');
+      final List<int> bytes =
           data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-      await File(path).writeAsBytes(bytes, flush: true);
+      await File(filePath).writeAsBytes(bytes, flush: true);
+
+      return _openDatabase(filePath);
     }
-    return openDatabase(path);
+  }
+
+  Future<Database> _openDatabase(String path) async {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return openDatabase(path);
+    } else {
+      sqfliteFfiInit();
+      return databaseFactoryFfi.openDatabase(path);
+    }
   }
 
   Future<List<Map<String, dynamic>>> getGroupBooks() async {

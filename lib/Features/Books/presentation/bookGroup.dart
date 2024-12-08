@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Core/database/db_helper.dart';
+import 'package:flutter_application_1/Core/database/db_helper_BookList.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/bookGroup/bookgroup_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/bookGroup/bookgroup_status.dart';
@@ -32,7 +32,7 @@ class _GroupsBookPageState extends State<GroupsBookPage> {
 
   Widget _buildGroupList() {
     return FutureBuilder<List<dynamic>>(
-      future: DBhelperBook().getGroupBooks(),
+      future: DBhelperBookList().getGroupBooks(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CustomLoading.fadingCircle(context));
@@ -64,7 +64,7 @@ class _GroupsBookPageState extends State<GroupsBookPage> {
 
   Widget _buildContentList() {
     return FutureBuilder<List<dynamic>>(
-      future: DBhelperBook().getGroupBooksContetnt(BookValues.fotherId),
+      future: DBhelperBookList().getGroupBooksContetnt(BookValues.fotherId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CustomLoading.fadingCircle(context));

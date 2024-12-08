@@ -16,7 +16,11 @@ class SettingsPage extends StatelessWidget {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('الإعدادات'),
+          iconTheme: const IconThemeData(color: Colors.white),
+          title: const Text(
+            'الإعدادات',
+            style: TextStyle(color: Colors.white),
+          ),
           centerTitle: true,
           backgroundColor:
               Theme.of(context).floatingActionButtonTheme.backgroundColor,

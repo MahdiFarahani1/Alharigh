@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Features/Settings/presentation/settings.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -28,43 +29,52 @@ class CustomDrawer extends StatelessWidget {
               child: ListView(
                 children: [
                   DrawerItem(
-                    icon: Icons.home_outlined,
-                    title: "Home",
+                    fontSize: 22,
+                    icon: FontAwesomeIcons.house,
+                    title: "الصفحة الرئيسية",
                     onTap: () {
                       Navigator.pop(context);
                     },
                   ),
                   DrawerItem(
-                    icon: Icons.person_outline,
-                    title: "Profile",
+                    fontSize: 22,
+                    icon: FontAwesomeIcons.newspaper,
+                    title: "السيرة الذاتية",
                     onTap: () {
                       Navigator.pop(context);
                     },
                   ),
                   DrawerItem(
-                    icon: Icons.settings_outlined,
-                    title: "Settings",
+                    fontSize: 22,
+                    icon: FontAwesomeIcons.mobileScreen,
+                    title: "حول التطبيق",
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  DrawerItem(
+                    icon: Icons.star,
+                    title: "المفضلة",
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  DrawerItem(
+                    icon: Icons.settings,
+                    title: "الإعدادات",
                     onTap: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SettingsPage(),
+                            builder: (context) => const SettingsPage(),
                           ));
                     },
                   ),
                   DrawerItem(
-                    icon: Icons.help_outline,
-                    title: "Help",
+                    icon: Icons.share,
+                    title: "مشاركة التطبيق",
                     onTap: () {
                       Navigator.pop(context);
-                    },
-                  ),
-                  DrawerItem(
-                    icon: Icons.logout,
-                    title: "Logout",
-                    onTap: () {
-                      Navigator.pop(context);
-                      // Add logout logic here
                     },
                   ),
                 ],
@@ -75,7 +85,7 @@ class CustomDrawer extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               child: const Text(
-                "App Version 1.0.0",
+                'مكتبة الرحیق المختوم / الإصدار 3.0',
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 12,
@@ -94,11 +104,12 @@ class DrawerItem extends StatelessWidget {
   final IconData icon;
   final String title;
   final VoidCallback onTap;
-
+  final double fontSize;
   const DrawerItem({
     required this.icon,
     required this.title,
     required this.onTap,
+    this.fontSize = 25,
     super.key,
   });
 
@@ -106,12 +117,16 @@ class DrawerItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(
+        size: fontSize,
         icon,
         color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
       ),
       title: Text(
         title,
-        style: const TextStyle(fontSize: 16),
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       onTap: onTap,
     );

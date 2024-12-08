@@ -54,6 +54,8 @@ dependencies:
   flutter_downloader: ^1.11.8
   get_storage: ^2.1.1
   carousel_slider: ^5.0.0
+  sqflite_common_ffi: ^2.3.4+3
+  path_provider: ^2.1.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
