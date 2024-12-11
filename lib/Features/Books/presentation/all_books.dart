@@ -1,12 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Core/database/db_helper_BookList.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
+import 'package:flutter_application_1/Features/Books/presentation/bloc/booksApi/book_api_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/widget/book_download_item.dart';
+import 'package:flutter_application_1/Features/DownloadPanel/presentation/download_panel.dart';
 import 'package:flutter_application_1/gen/assets.gen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
-class AllBooksPage extends StatelessWidget {
+class AllBooksPage extends StatefulWidget {
   const AllBooksPage({super.key});
+
+  @override
+  State<AllBooksPage> createState() => _AllBooksPageState();
+}
+
+class _AllBooksPageState extends State<AllBooksPage> {
+  @override
+  void initState() {
+    BlocProvider.of<BookApiCubit>(context).fetchData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +42,7 @@ class AllBooksPage extends StatelessWidget {
           return Column(
             children: [
               Container(
-                margin: EdgeInsets.all(8),
+                margin: const EdgeInsets.all(8),
                 width: 160,
                 height: 40,
                 decoration: BoxDecoration(
@@ -62,9 +76,28 @@ class AllBooksPage extends StatelessWidget {
                   itemCount: content.length,
                   itemBuilder: (context, index) {
                     final item = content[index];
+
+                    bool havePart = item['joz'] != 0;
+
                     return BookDownloadItem(
-                      title: item['title'],
-                      onTap: () {},
+                      title: havePart
+                          ? item['title'] +
+                              " " 'الجزء' " " +
+                              item['joz'].toString()
+                          : item['title'],
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            DialogRoute(
+                              context: context,
+                              builder: (context) => DownloadPanel(
+                                fileName: 'cc',
+                                url:
+                                    'https://yaqoobi.com/arabic/files.php?force&file=new-books/pdf/2022/dyat-alkatl.pdf',
+                                id: item['id'],
+                              ),
+                            ));
+                      },
                     );
                   },
                 ),

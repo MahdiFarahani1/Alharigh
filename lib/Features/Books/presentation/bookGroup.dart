@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Core/database/db_helper_BookList.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
+import 'package:flutter_application_1/Features/Books/presentation/bloc/booksApi/book_api_cubit.dart';
+import 'package:flutter_application_1/Features/Books/presentation/bloc/categoryApi/book_group_api_cubit.dart';
+import 'package:flutter_application_1/Features/Books/presentation/bloc/categoryApi/status.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/bookGroup/bookgroup_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/bookGroup/bookgroup_status.dart';
 import 'package:flutter_application_1/Features/Books/presentation/widget/book_download_item.dart';
@@ -17,15 +20,42 @@ class GroupsBookPage extends StatefulWidget {
 
 class _GroupsBookPageState extends State<GroupsBookPage> {
   @override
+  void initState() {
+    BlocProvider.of<BookGroupApiCubit>(context).fetchData();
+    BlocProvider.of<BookApiCubit>(context).fetchData();
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BookgroupCubit, BookgroupState>(
+    return BlocBuilder<BookGroupApiCubit, BookGroupApiState>(
       builder: (context, state) {
-        if (state.status is BookGroup) {
-          return _buildGroupList();
-        } else if (state.status is BookContent) {
-          return _buildContentList();
+        if (state.status is LoadedDataBookGroup) {
+          return BlocBuilder<BookgroupCubit, BookgroupState>(
+            builder: (context, state) {
+              if (state.status is BookGroup) {
+                return _buildGroupList();
+              } else if (state.status is BookContent) {
+                return _buildContentList();
+              }
+              return const Center(child: Text('Unknown State'));
+            },
+          );
         }
-        return const Center(child: Text('Unknown State'));
+
+        if (state.status is LoadingBookGroup) {
+          return Center(
+            child: CustomLoading.fadingCircle(context),
+          );
+        }
+
+        if (state.status is ErrorBookGroup) {
+          return const Center(
+            child: Text('error'),
+          );
+        }
+        return const SizedBox();
       },
     );
   }
@@ -103,8 +133,14 @@ class _GroupsBookPageState extends State<GroupsBookPage> {
                   itemCount: content.length,
                   itemBuilder: (context, index) {
                     final item = content[index];
+                    bool havePart = item['joz'] != 0;
+
                     return BookDownloadItem(
-                      title: item['title'],
+                      title: havePart
+                          ? item['title'] +
+                              " " 'الجزء' " " +
+                              item['joz'].toString()
+                          : item['title'],
                       onTap: () {},
                     );
                   },
