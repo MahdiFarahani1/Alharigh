@@ -3,11 +3,14 @@ import 'package:flutter_application_1/Features/DownloadPanel/presentation/cubit/
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DownloadPanel extends StatefulWidget {
-  final String fileName;
   final String url;
   final int id;
+  final String downloadPath;
   const DownloadPanel(
-      {super.key, required this.fileName, required this.url, required this.id});
+      {super.key,
+      required this.url,
+      required this.id,
+      required this.downloadPath});
 
   @override
   State<DownloadPanel> createState() => _DownloadPanelState();
@@ -20,7 +23,7 @@ class _DownloadPanelState extends State<DownloadPanel> {
       textDirection: TextDirection.rtl,
       child: BlocProvider(
         create: (context) => DownloadCubit()
-          ..startDownload(context, widget.url, widget.fileName),
+          ..startDownload(context, widget.url, widget.downloadPath, widget.id),
         child: AlertDialog(
           content: BlocBuilder<DownloadCubit, DownloadState>(
             builder: (context, state) {

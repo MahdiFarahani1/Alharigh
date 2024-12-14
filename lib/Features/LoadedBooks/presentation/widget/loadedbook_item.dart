@@ -1,21 +1,27 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Core/utils/esay_size.dart';
-import 'package:flutter_application_1/gen/assets.gen.dart';
+import 'package:flutter_application_1/Core/utils/loading.dart';
 
 class LoadedbookItem extends StatelessWidget {
-  final int numberBook; // تعداد کل کتاب‌ها
+  final int numberBook;
   final String categoryName;
+  final List<Map<String, dynamic>> books;
 
-  const LoadedbookItem(
-      {super.key, required this.numberBook, required this.categoryName});
+  const LoadedbookItem({
+    super.key,
+    required this.numberBook,
+    required this.categoryName,
+    required this.books,
+  });
 
   @override
   Widget build(BuildContext context) {
     // تقسیم کتاب‌ها به گروه‌های 3‌تایی برای هر قفسه
-    List<List<int>> shelves = [];
-    for (var i = 0; i < numberBook; i += 3) {
-      shelves.add(List.generate(
-          i + 3 > numberBook ? numberBook - i : 3, (index) => i + index));
+    List<List<Map<String, dynamic>>> shelves = [];
+    for (var i = 0; i < books.length; i += 3) {
+      shelves
+          .add(books.sublist(i, i + 3 > books.length ? books.length : i + 3));
     }
 
     return Directionality(
@@ -29,15 +35,17 @@ class LoadedbookItem extends StatelessWidget {
                 alignment: Alignment.topRight,
                 child: Container(
                   alignment: Alignment.centerRight,
-                  width: EsaySize.width(context) / 2,
+                  width: EsaySize.width(context) / 1.5,
                   height: 30,
                   decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .floatingActionButtonTheme
-                          .backgroundColor,
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          bottomLeft: Radius.circular(8))),
+                    color: Theme.of(context)
+                        .floatingActionButtonTheme
+                        .backgroundColor,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      bottomLeft: Radius.circular(8),
+                    ),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: Text(
@@ -63,22 +71,30 @@ class LoadedbookItem extends StatelessWidget {
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
-                            Assets.images.tlib
-                                .image(width: EsaySize.width(context)),
+                            // تصویر قفسه
+                            Image.asset(
+                              'assets/images/tlib.png',
+                              width: EsaySize.width(context),
+                            ),
+                            // کتاب‌ها روی قفسه
                             Positioned(
                               top: -105,
                               child: Padding(
-                                padding: const EdgeInsets.only(right: 20),
+                                padding: const EdgeInsets.only(right: 50),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: shelfBooks.map((bookIndex) {
-                                    return Assets.images.item.image(
-                                      width: 120,
-                                      height: 120,
-                                    );
-                                  }).toList(),
-                                ),
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: shelfBooks.map((book) {
+                                      return CachedNetworkImage(
+                                        imageUrl: book['img'],
+                                        width: 100,
+                                        height: 120,
+                                        fit: BoxFit.fill,
+                                        placeholder: (context, url) {
+                                          return CustomLoading.pulse(context);
+                                        },
+                                      );
+                                    }).toList()),
                               ),
                             ),
                           ],

@@ -12,7 +12,7 @@ class NavBarCubit extends Cubit<int> {
   List widgets = [
     const FavoritePage(),
     const DownloadedBookListPage(),
-    LoadedbookPage(),
+    const LoadedBookPage(),
     const AllBooksPage(),
     const GroupsBookPage(),
   ];

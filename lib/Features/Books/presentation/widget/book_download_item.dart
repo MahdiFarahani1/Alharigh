@@ -5,16 +5,20 @@ import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
 class BookDownloadItem extends StatelessWidget {
   final String title;
-
   final Function() onTap;
-  const BookDownloadItem({super.key, required this.title, required this.onTap});
+  final bool isDownloaded; // Add this field
+
+  const BookDownloadItem({
+    super.key,
+    required this.title,
+    required this.onTap,
+    required this.isDownloaded,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ZoomTapAnimation(
-      onTap: () {
-        onTap();
-      },
+      onTap: onTap,
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
@@ -36,9 +40,11 @@ class BookDownloadItem extends StatelessWidget {
                   padding: const EdgeInsets.all(4.0),
                   child: SvgPicture.asset(
                     Assets.images.bookDownload,
-                    color: Theme.of(context)
-                        .floatingActionButtonTheme
-                        .backgroundColor,
+                    color: isDownloaded
+                        ? Colors.amberAccent
+                        : Theme.of(context)
+                            .floatingActionButtonTheme
+                            .backgroundColor,
                   ),
                 )),
             Expanded(

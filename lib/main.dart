@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Config/theme/theme.dart';
+import 'package:flutter_application_1/Features/Books/presentation/bloc/allbookList/book_all_list_data_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/booksApi/book_api_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/categoryApi/book_group_api_cubit.dart';
 import 'package:flutter_application_1/Features/Home/presentation/bloc/cubit/nav_bar_cubit.dart';
@@ -43,9 +44,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => BookApiCubit(),
         ),
-        //  BlocProvider(
-        //   create: (context) => BookGroupApiCubit(),
-        // ),
+        BlocProvider(
+          create: (context) => BookAllListDataCubit(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

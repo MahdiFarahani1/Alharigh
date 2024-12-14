@@ -10,3 +10,12 @@ extension MethodEx on String {
     return this;
   }
 }
+
+extension BookTitleExtension on Map<String, dynamic> {
+  String get formattedTitleWithJoz {
+    bool havePart = this['joz'] != 0;
+    return havePart
+        ? '${this['title']} الجزء ${this['joz']}'
+        : '${this['title']}';
+  }
+}

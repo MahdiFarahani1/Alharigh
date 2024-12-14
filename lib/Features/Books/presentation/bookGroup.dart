@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Core/constant/api_const.dart';
 import 'package:flutter_application_1/Core/database/db_helper_BookList.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/booksApi/book_api_cubit.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_application_1/Features/Books/presentation/bloc/bookGroup
 import 'package:flutter_application_1/Features/Books/presentation/widget/book_download_item.dart';
 import 'package:flutter_application_1/Features/Books/presentation/widget/book_group_item.dart';
 import 'package:flutter_application_1/Features/Books/repository/book_gid.dart';
+import 'package:flutter_application_1/Features/DownloadPanel/presentation/download_panel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GroupsBookPage extends StatefulWidget {
@@ -23,7 +25,6 @@ class _GroupsBookPageState extends State<GroupsBookPage> {
   void initState() {
     BlocProvider.of<BookGroupApiCubit>(context).fetchData();
     BlocProvider.of<BookApiCubit>(context).fetchData();
-
     super.initState();
   }
 
@@ -134,14 +135,32 @@ class _GroupsBookPageState extends State<GroupsBookPage> {
                   itemBuilder: (context, index) {
                     final item = content[index];
                     bool havePart = item['joz'] != 0;
+                    final isDownloaded = item['downloaded'] == 1;
 
                     return BookDownloadItem(
+                      isDownloaded: isDownloaded,
                       title: havePart
                           ? item['title'] +
                               " " 'الجزء' " " +
                               item['joz'].toString()
                           : item['title'],
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            DialogRoute(
+                              context: context,
+                              builder: (context) => DownloadPanel(
+                                downloadPath: 'Books/',
+                                url: ApiConstant.downloadUrl +
+                                    item['id'].toString(),
+                                id: item['id'],
+                              ),
+                            )).then(
+                          (value) {
+                            setState(() {});
+                          },
+                        );
+                      },
                     );
                   },
                 ),

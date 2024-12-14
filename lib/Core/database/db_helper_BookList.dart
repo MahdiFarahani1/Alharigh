@@ -56,6 +56,11 @@ class DBhelperBookList {
     );
   }
 
+  Future<List<Map<String, dynamic>>> getGroupBookWithGid(int gid) async {
+    final db = await database;
+    return db.query('bookgroups', where: 'fatherId = ?', whereArgs: [gid]);
+  }
+
   Future<List<Map<String, dynamic>>> getGroupBooksContetnt(int fotherId) async {
     final db = await database;
     return db.query(
@@ -68,7 +73,8 @@ class DBhelperBookList {
 
   Future<List<Map<String, dynamic>>> getAllBooks() async {
     final db = await database;
-    return db.query('books', orderBy: 'id_show ASC');
+    return db.query('books',
+        orderBy: 'id_show ASC', where: 'downloaded = ?', whereArgs: [0]);
   }
 
   Future<List<Map<String, dynamic>>> getRealArticle(int id) async {
@@ -128,6 +134,24 @@ class DBhelperBookList {
     }
   }
 
+  Future<void> updateDownload(int id, int isDownload) async {
+    final db = await database;
+
+    await db.rawUpdate(
+      'UPDATE books SET downloaded = ? WHERE id = ?',
+      [isDownload, id],
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getDownloadedItems() async {
+    final db = await database;
+
+    return await db.rawQuery(
+      'SELECT * FROM books WHERE downloaded = ?',
+      [1],
+    );
+  }
+
   Future<void> insertOrUpdateBook({
     required String title,
     required int idShow,
@@ -171,7 +195,6 @@ class DBhelperBookList {
           "description": description,
           'version': 2,
           'info_version': 0,
-          'downloaded': 0,
           'fav': 0,
           'last_update': lastUpdate,
           'sound_dl': 0,
