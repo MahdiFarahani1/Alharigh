@@ -80,7 +80,7 @@ class _AllBooksPageState extends State<AllBooksPage> {
                         DialogRoute(
                           context: context,
                           builder: (context) => DownloadPanel(
-                            downloadPath: 'Books/',
+                            downloadPath: '${item['id']}.zip',
                             url:
                                 ApiConstant.downloadUrl + item['id'].toString(),
                             id: item['id'],

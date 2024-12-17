@@ -10,9 +10,9 @@ part 'book_group_api_state.dart';
 
 class BookGroupApiCubit extends Cubit<BookGroupApiState> {
   BookGroupApiCubit() : super(BookGroupApiState(status: LoadingBookGroup()));
+  DBhelperBookList dBhelperBookList = DBhelperBookList();
 
   fetchData() async {
-    DBhelperBookList dBhelperBookList = DBhelperBookList();
     emit(BookGroupApiState(status: LoadingBookGroup()));
 
     var _connection = await CheckConnection().checkInternetConnection();
@@ -24,19 +24,21 @@ class BookGroupApiCubit extends Cubit<BookGroupApiState> {
             await DataListBookProvider().data(lastUpdate.toString());
 
         final modelBooks = ModelBooks.fromJson(response);
-
-        for (var element in modelBooks.categories!) {
-          await dBhelperBookList.insertOrUpdateCategory(
-            fatherId: element.id!,
-            title: element.title!,
-            idShow: element.idShow!,
-            bookCount: element.booksCount!,
-          );
+        if (modelBooks.books!.isNotEmpty) {
+          for (var element in modelBooks.categories!) {
+            await dBhelperBookList.insertOrUpdateCategory(
+              fatherId: element.id!,
+              title: element.title!,
+              idShow: element.idShow!,
+              bookCount: element.booksCount!,
+            );
+          }
         }
-        DBhelperLastUpdate().updateLastUpdate(modelBooks.lastUpdate!);
-        print(await DBhelperLastUpdate().getLastUpdate());
 
         emit(BookGroupApiState(status: LoadedDataBookGroup()));
+        if (modelBooks.lastUpdate!.isNotEmpty && modelBooks.lastUpdate != '') {
+          await DBhelperLastUpdate().updateLastUpdate(modelBooks.lastUpdate!);
+        }
       } catch (e) {
         emit(BookGroupApiState(status: ErrorBookGroup()));
       }

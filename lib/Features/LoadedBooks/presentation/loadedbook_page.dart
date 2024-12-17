@@ -29,7 +29,7 @@ class LoadedBookPage extends StatelessWidget {
                         groupedBooks[categoryName]!;
 
                     return LoadedbookItem(
-                      numberBook: books.length,
+                      //   numberBook: books.length,
                       categoryName: categoryName,
                       books: books,
                     );

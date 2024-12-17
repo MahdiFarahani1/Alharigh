@@ -2,11 +2,29 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Core/database/db_helper_BookList.dart';
+import 'package:flutter_application_1/Core/utils/directory_app.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
+import 'package:flutter_application_1/Features/LoadedBooks/repository/delete_file.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
-class DownloadedBookListPage extends StatelessWidget {
+class DownloadedBookListPage extends StatefulWidget {
   const DownloadedBookListPage({super.key});
+
+  @override
+  State<DownloadedBookListPage> createState() => _DownloadedBookListPageState();
+}
+
+class _DownloadedBookListPageState extends State<DownloadedBookListPage> {
+  late Directory pathImg;
+  @override
+  void initState() {
+    convertPath();
+    super.initState();
+  }
+
+  convertPath() async {
+    pathImg = await localDirectory('/books');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +70,7 @@ class DownloadedBookListPage extends StatelessWidget {
                     child: Row(
                       children: [
                         Image.file(
-                          File(
-                              '/storage/emulated/0/Download/Books/${book['id']}.jpg'),
+                          File("${pathImg.path}/${book['id']}.jpg"),
                           width: 60,
                           height: 90,
                           fit: BoxFit.cover,
@@ -78,14 +95,62 @@ class DownloadedBookListPage extends StatelessWidget {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  iconItem(context,
-                                      icon: Icons.delete, onTap: () {}),
+                                  iconItem(context, icon: Icons.delete,
+                                      onTap: () async {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text(
+                                          'تأكيد الحذف',
+                                          textDirection: TextDirection.rtl,
+                                        ),
+                                        content: const Text(
+                                          'هل أنت متأكد أنك تريد حذف الكتاب؟',
+                                          textDirection: TextDirection.rtl,
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text(
+                                              'إلغاء',
+                                              textDirection: TextDirection.rtl,
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              await DBhelperBookList()
+                                                  .updateDownload(
+                                                      book['id'], 0);
+                                              deleteFile(
+                                                  '/storage/emulated/0/Download/Books/${book['id']}.zip');
+                                              deleteFile(
+                                                  '/storage/emulated/0/Download/Books/${book['id']}.jpg');
+                                              deleteFile(
+                                                  '/storage/emulated/0/Download/Books/b${book['id']}.sqlite');
+                                              setState(() {});
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text(
+                                              'تأكيد',
+                                              textDirection: TextDirection.rtl,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
                                   iconItem(context,
                                       icon: Icons.print, onTap: () {}),
                                   iconItem(context,
                                       icon: Icons.qr_code, onTap: () {}),
                                   iconItem(context,
-                                      icon: Icons.picture_as_pdf, onTap: () {}),
+                                      icon: Icons.picture_as_pdf,
+                                      onTap: () {},
+                                      color: book['pdf'] == ''
+                                          ? Colors.grey
+                                          : Colors.white),
                                   iconItem(context,
                                       icon: Icons.volume_up, onTap: () {}),
                                   iconItem(context,
@@ -109,7 +174,9 @@ class DownloadedBookListPage extends StatelessWidget {
   }
 
   Widget iconItem(BuildContext context,
-      {required IconData icon, required Function onTap}) {
+      {required IconData icon,
+      required Function onTap,
+      Color color = Colors.white}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 2),
       child: ZoomTapAnimation(
@@ -125,7 +192,7 @@ class DownloadedBookListPage extends StatelessWidget {
             padding: const EdgeInsets.all(4.0),
             child: Icon(
               icon,
-              color: Colors.white,
+              color: color,
               size: 24,
             ),
           ),

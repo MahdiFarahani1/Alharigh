@@ -2,112 +2,129 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Core/utils/esay_size.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
+import 'package:flutter_application_1/content_page.dart';
+import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
 class LoadedbookItem extends StatelessWidget {
-  final int numberBook;
   final String categoryName;
   final List<Map<String, dynamic>> books;
 
   const LoadedbookItem({
     super.key,
-    required this.numberBook,
     required this.categoryName,
     required this.books,
   });
 
   @override
   Widget build(BuildContext context) {
-    // تقسیم کتاب‌ها به گروه‌های 3‌تایی برای هر قفسه
-    List<List<Map<String, dynamic>>> shelves = [];
-    for (var i = 0; i < books.length; i += 3) {
-      shelves
-          .add(books.sublist(i, i + 3 > books.length ? books.length : i + 3));
-    }
-
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Center(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 40, top: 10),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  alignment: Alignment.centerRight,
-                  width: EsaySize.width(context) / 1.5,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .floatingActionButtonTheme
-                        .backgroundColor,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      bottomLeft: Radius.circular(8),
-                    ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20, top: 10),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                alignment: Alignment.centerRight,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .floatingActionButtonTheme
+                      .backgroundColor!,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    bottomLeft: Radius.circular(8),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Text(
-                      categoryName,
-                      style: const TextStyle(color: Colors.white),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 8,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Text(
+                    categoryName,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
             ),
-            SizedBox(
-              width: EsaySize.width(context),
-              child: ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: shelves.length,
-                itemBuilder: (context, index) {
-                  final shelfBooks = shelves[index];
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 100),
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            // تصویر قفسه
-                            Image.asset(
-                              'assets/images/tlib.png',
-                              width: EsaySize.width(context),
-                            ),
-                            // کتاب‌ها روی قفسه
-                            Positioned(
-                              top: -105,
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 50),
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: shelfBooks.map((book) {
-                                      return CachedNetworkImage(
-                                        imageUrl: book['img'],
-                                        width: 100,
-                                        height: 120,
-                                        fit: BoxFit.fill,
-                                        placeholder: (context, url) {
-                                          return CustomLoading.pulse(context);
-                                        },
-                                      );
-                                    }).toList()),
-                              ),
-                            ),
-                          ],
-                        ),
+          ),
+          SizedBox(
+            width: EsaySize.width(context),
+            height: EsaySize.height(context) / 3.7,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: books.map((book) {
+                bool havePart = book['joz'] != 0;
+
+                return ZoomTapAnimation(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ContentPage(id: book['id']),
+                        ));
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).primaryColor,
+                        width: 1.5,
                       ),
-                      const SizedBox(height: 10),
-                    ],
-                  );
-                },
-              ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 5,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl: book['img'],
+                            width: 110,
+                            height: 130,
+                            fit: BoxFit.fill,
+                            placeholder: (context, url) =>
+                                CustomLoading.pulse(context),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            havePart
+                                ? book['title'] +
+                                    " " 'الجزء' " " +
+                                    book['joz'].toString()
+                                : book['title'],
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

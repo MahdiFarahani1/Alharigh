@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_application_1/Core/database/db_helper_BookList.dart';
-import 'package:meta/meta.dart';
 
 part 'loaded_book_with_category_state.dart';
 
