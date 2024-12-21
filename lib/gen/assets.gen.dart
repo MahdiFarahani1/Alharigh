@@ -31,14 +31,6 @@ class $AssetsImagesGen {
   /// File path: assets/images/book.svg
   String get book => 'assets/images/book.svg';
 
-  /// File path: assets/images/bookmark1.png
-  AssetGenImage get bookmark1 =>
-      const AssetGenImage('assets/images/bookmark1.png');
-
-  /// File path: assets/images/bookmark2.png
-  AssetGenImage get bookmark2 =>
-      const AssetGenImage('assets/images/bookmark2.png');
-
   /// File path: assets/images/bookmarkhome.svg
   String get bookmarkhome => 'assets/images/bookmarkhome.svg';
 
@@ -64,8 +56,6 @@ class $AssetsImagesGen {
   List<dynamic> get values => [
         bookDownload,
         book,
-        bookmark1,
-        bookmark2,
         bookmarkhome,
         download,
         item,
@@ -86,6 +76,14 @@ class $AssetsWebGen {
 class $AssetsWebCssGen {
   const $AssetsWebCssGen();
 
+  /// File path: assets/web/css/bookmark1.png
+  AssetGenImage get bookmark1 =>
+      const AssetGenImage('assets/web/css/bookmark1.png');
+
+  /// File path: assets/web/css/bookmark2.png
+  AssetGenImage get bookmark2 =>
+      const AssetGenImage('assets/web/css/bookmark2.png');
+
   /// File path: assets/web/css/bootstrap.rtl.min.css
   String get bootstrapRtlMin => 'assets/web/css/bootstrap.rtl.min.css';
 
@@ -93,7 +91,7 @@ class $AssetsWebCssGen {
   String get mhebooks => 'assets/web/css/mhebooks.css';
 
   /// List of all assets
-  List<String> get values => [bootstrapRtlMin, mhebooks];
+  List<dynamic> get values => [bookmark1, bookmark2, bootstrapRtlMin, mhebooks];
 }
 
 class $AssetsWebJsGen {

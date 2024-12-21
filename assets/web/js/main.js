@@ -17,6 +17,17 @@ function search(query) {
   });
   
 }
+
+function getOffset(el) {
+  var _x = 0;
+  var _y = 0;
+  while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
+    _x += el.offsetLeft - el.scrollLeft;
+    _y += el.offsetTop - el.scrollTop;
+    el = el.offsetParent;
+  }
+  return { top: _y, left: _x };
+}
 $(function () {
   console.log("qqeqqqqqqqqqq")
   $('[data-toggle="tooltip"]').tooltip({
@@ -100,16 +111,7 @@ function GET_TOP(el) {
   return { top: rect.top, left: rect.left };
 }
 
-function getOffset(el) {
-  var _x = 0;
-  var _y = 0;
-  while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
-    _x += el.offsetLeft - el.scrollLeft;
-    _y += el.offsetTop - el.scrollTop;
-    el = el.offsetParent;
-  }
-  return { top: _y, left: _x };
-}
+
 
 // function ChangeSliderPage() {
 //   input = document.getElementById("slide_se");

@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Core/utils/esay_size.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
-import 'package:flutter_application_1/content_page.dart';
+import 'package:flutter_application_1/Features/ContentBooks/presentation/content_page.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
 class LoadedbookItem extends StatelessWidget {
@@ -71,7 +71,14 @@ class LoadedbookItem extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ContentPage(id: book['id']),
+                          builder: (context) => ContentPage(
+                            id: book['id'],
+                            bookName: havePart
+                                ? book['title'] +
+                                    " " 'الجزء' " " +
+                                    book['joz'].toString()
+                                : book['title'],
+                          ),
                         ));
                   },
                   child: Container(

@@ -1,7 +1,6 @@
 import 'dart:io';
-import 'package:flutter/services.dart';
+import 'package:flutter_application_1/Core/utils/directory_app.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DBhelperContent {
@@ -14,7 +13,6 @@ class DBhelperContent {
 
   DBhelperContent._internal();
 
-  // متد برای باز کردن دیتابیس در مسیر مشخص
   Future<Database> database(String dbName, String folderName) async {
     if (_databases.containsKey(dbName)) return _databases[dbName]!;
 
@@ -23,24 +21,19 @@ class DBhelperContent {
     return db;
   }
 
-  // متد اصلی برای آماده‌سازی دیتابیس
   Future<Database> _initDb(String dbName, String folderName) async {
-    // Get the local directory
     final dir = await localDirectory(folderName);
     final path = join(dir.path, dbName);
 
-    // Check if the database file exists in the device storage
     final exist = await File(path).exists();
 
     if (!exist) {
-      // If the file doesn't exist, you can handle it by throwing an error or other logic
       throw Exception('Database file not found at path: $path');
     }
 
-    return _openDatabase(path); // Open the database
+    return _openDatabase(path);
   }
 
-  // باز کردن دیتابیس
   Future<Database> _openDatabase(String path) async {
     if (Platform.isAndroid || Platform.isIOS) {
       return openDatabase(path);
@@ -50,26 +43,47 @@ class DBhelperContent {
     }
   }
 
-  // متد برای دریافت مسیر محلی
-  Future<Directory> localDirectory(String folderName) async {
-    final downloadPath = await getApplicationDocumentsDirectory();
-    final booksDir = Directory('${downloadPath.path}/$folderName');
-    return booksDir;
-  }
-
-  // کوئری برای دریافت همه کتاب‌ها از دیتابیس
-  Future<List<Map<String, dynamic>>> getGroupBooks(
-      String dbName, String folderName) async {
-    final db = await database(dbName, folderName);
+  Future<List<Map<String, dynamic>>> getContentBooks(
+    String dbName,
+  ) async {
+    final db = await database(dbName, '/books');
     return db.query(
       'bpages',
     );
   }
 
-  // کوئری برای دریافت کتاب‌های یک گروه خاص
-  Future<List<Map<String, dynamic>>> getGroupBookWithGid(
-      String dbName, String folderName, int gid) async {
-    final db = await database(dbName, folderName);
-    return db.query('bookgroups', where: 'fatherId = ?', whereArgs: [gid]);
+  Future<List<Map<String, dynamic>>> getGroupBooks(
+    String dbName,
+  ) async {
+    final db = await database(dbName, '/books');
+    return db.query(
+      'bgroups',
+    );
+  }
+
+  updateFav(String dbName, int pageId) async {
+    final db = await database(dbName, '/books');
+
+    var result = await db.query(
+      'bpages',
+      columns: ['fav'],
+      where: 'id = ?',
+      whereArgs: [pageId],
+    );
+
+    if (result.isNotEmpty) {
+      int currentFav = result.first['fav'] as int;
+
+      int newFav = currentFav == 0 ? 1 : 0;
+
+      return db.update(
+        'bpages',
+        {'fav': newFav},
+        where: 'id = ?',
+        whereArgs: [pageId],
+      );
+    } else {
+      throw Exception("Page not found.");
+    }
   }
 }

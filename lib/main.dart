@@ -5,6 +5,7 @@ import 'package:flutter_application_1/Config/theme/theme.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/allbookList/book_all_list_data_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/booksApi/book_api_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/categoryApi/book_group_api_cubit.dart';
+import 'package:flutter_application_1/Features/ContentBooks/presentation/bloc/search/search_group_cubit.dart';
 import 'package:flutter_application_1/Features/Home/presentation/bloc/cubit/nav_bar_cubit.dart';
 import 'package:flutter_application_1/Features/Home/presentation/home.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/bookGroup/bookgroup_cubit.dart';
@@ -46,6 +47,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => BookAllListDataCubit(),
+        ),
+        BlocProvider(
+          create: (context) => SearchGroupCubit(),
         ),
       ],
       child: MaterialApp(
