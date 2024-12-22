@@ -61,6 +61,13 @@ class DBhelperContent {
     );
   }
 
+  Future<List<Map<String, dynamic>>> getFavoritePages(
+    String dbName,
+  ) async {
+    final db = await database(dbName, '/books');
+    return db.query('bpages', where: 'fav = ?', whereArgs: [1]);
+  }
+
   updateFav(String dbName, int pageId) async {
     final db = await database(dbName, '/books');
 
@@ -75,12 +82,17 @@ class DBhelperContent {
       int currentFav = result.first['fav'] as int;
 
       int newFav = currentFav == 0 ? 1 : 0;
-
-      return db.update(
+      return db
+          .update(
         'bpages',
         {'fav': newFav},
         where: 'id = ?',
         whereArgs: [pageId],
+      )
+          .then(
+        (value) {
+          return newFav;
+        },
       );
     } else {
       throw Exception("Page not found.");

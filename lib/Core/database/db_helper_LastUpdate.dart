@@ -60,4 +60,39 @@ class DBhelperLastUpdate {
       'last_update': lastUpdate,
     });
   }
+
+  insertOrdeletePageFavorite(
+      int idPage, int idBook, String bookName, String text) async {
+    final db = await database;
+
+    final result = await db.query(
+      'bookmark',
+      where: 'idpage = ? AND idbook = ?',
+      whereArgs: [idPage, idBook],
+    );
+
+    if (result.isNotEmpty) {
+      await db.delete(
+        'bookmark',
+        where: 'idpage = ? AND idbook = ?',
+        whereArgs: [idPage, idBook],
+      );
+    } else {
+      await db.insert('bookmark', {
+        'idbook': idBook,
+        'idpage': idPage,
+        'text': text,
+        'book_name': bookName,
+      });
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getDataPageFavorite() async {
+    final db = await database;
+
+    final result = await db.query(
+      'bookmark',
+    );
+    return result;
+  }
 }

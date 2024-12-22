@@ -72,6 +72,7 @@ class LoadedbookItem extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ContentPage(
+                            scrollPosetion: 1,
                             id: book['id'],
                             bookName: havePart
                                 ? book['title'] +

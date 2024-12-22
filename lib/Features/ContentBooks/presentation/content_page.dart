@@ -3,7 +3,8 @@ import 'package:another_xlider/enums/tooltip_direction_enum.dart';
 import 'package:another_xlider/models/tooltip/tooltip.dart';
 import 'package:another_xlider/models/trackbar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Core/database/db_helper_content.dart';
+import 'package:flutter_application_1/Core/database/db_helper_Content.dart';
+import 'package:flutter_application_1/Core/database/db_helper_LastUpdate.dart';
 import 'package:flutter_application_1/Core/utils/esay_size.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
 import 'package:flutter_application_1/Features/ContentBooks/presentation/bloc/slider/slider_cubit.dart';
@@ -15,8 +16,13 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 class ContentPage extends StatefulWidget {
   final int id;
   final String bookName;
+  final double scrollPosetion;
 
-  const ContentPage({super.key, required this.id, required this.bookName});
+  const ContentPage(
+      {super.key,
+      required this.id,
+      required this.bookName,
+      required this.scrollPosetion});
 
   @override
   State<ContentPage> createState() => _ContentPageState();
@@ -27,7 +33,7 @@ class _ContentPageState extends State<ContentPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SliderCubit(),
+      create: (context) => SliderCubit()..onChangeState(widget.scrollPosetion),
       child: Scaffold(
         appBar: AppBar(
           actions: [
@@ -59,7 +65,6 @@ class _ContentPageState extends State<ContentPage> {
               );
             }
             if (snapshot.hasError) {
-              print('${snapshot.error}');
               return Center(
                 child: Text('${snapshot.error}'),
               );
@@ -125,6 +130,10 @@ class _ContentPageState extends State<ContentPage> {
                             int bookmarkId = args[0] + 1;
                             await DBhelperContent()
                                 .updateFav('b${widget.id}.sqlite', bookmarkId);
+
+                            await DBhelperLastUpdate()
+                                .insertOrdeletePageFavorite(
+                                    bookmarkId, widget.id, widget.bookName, '');
                           },
                         );
                       },
@@ -192,6 +201,12 @@ class _ContentPageState extends State<ContentPage> {
                             assetFilePath: Assets.web.js.bootstrapBundleMin);
                         await controller.injectJavascriptFileFromAsset(
                             assetFilePath: Assets.web.js.main);
+                        await controller.evaluateJavascript(source: '''
+  if (${widget.scrollPosetion} != 0) {
+    var y = getOffset(document.getElementById('book-mark_${widget.scrollPosetion == 0 ? widget.scrollPosetion : widget.scrollPosetion.floor() - 1}')).top;
+    window.scrollTo(0, y);
+  }
+''');
 
                         await controller.evaluateJavascript(source: r'''
             $(function () {
@@ -245,6 +260,27 @@ class _ContentPageState extends State<ContentPage> {
                             disabled: false,
                             direction: FlutterSliderTooltipDirection.left,
                             disableAnimation: false,
+                            custom: (value) => Padding(
+                              padding: const EdgeInsets.only(right: 4),
+                              child: Card(
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(8),
+                                        bottomRight: Radius.circular(8))),
+                                color: Theme.of(context)
+                                    .floatingActionButtonTheme
+                                    .backgroundColor,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Text(
+                                    value.toStringAsFixed(0),
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ),
                             // boxStyle: FlutterSliderTooltipBox(),
                           ),
                           trackBar: FlutterSliderTrackBar(
@@ -259,8 +295,8 @@ class _ContentPageState extends State<ContentPage> {
                           // },
                           onDragCompleted:
                               (handlerIndex, lowerValue, upperValue) async {
-                            debugPrint(lowerValue.floor().toString() +
-                                '<<<<=======lowerValue');
+                            debugPrint(
+                                '${lowerValue.floor()}<<<<=======lowerValue');
                             await webViewController.evaluateJavascript(
                               source: '''
                           window.scrollTo(0, 0);
@@ -270,7 +306,6 @@ class _ContentPageState extends State<ContentPage> {
                           
                           ''',
                             );
-                            print(lowerValue);
                             BlocProvider.of<SliderCubit>(context)
                                 .onChangeState(lowerValue);
                           },
