@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Features/Favorite/presentation/favorite_book.dart';
 import 'package:flutter_application_1/Features/Settings/presentation/settings.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -56,7 +57,11 @@ class CustomDrawer extends StatelessWidget {
                     icon: Icons.star,
                     title: "المفضلة",
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FavoriteBook(),
+                          ));
                     },
                   ),
                   DrawerItem(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/gen/fonts.gen.dart';
 
 class ThemeApp {
   static const Color primaryColor = Color(0xFFFFFFFF); // سفید اصلی
@@ -6,26 +7,27 @@ class ThemeApp {
   static const Color accentColor = Color.fromARGB(255, 52, 97, 122);
 
   static ThemeData lightTheme = ThemeData(
+    fontFamily: FontFamily.appFont,
     brightness: Brightness.light,
     primaryColor: primaryColor,
     scaffoldBackgroundColor: secondaryColor,
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       backgroundColor: primaryColor,
       elevation: 0,
-      iconTheme: const IconThemeData(
+      iconTheme: IconThemeData(
         color: Colors.black87,
       ),
-      titleTextStyle: const TextStyle(
+      titleTextStyle: TextStyle(
         color: Colors.black87,
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
     ),
-    floatingActionButtonTheme: FloatingActionButtonThemeData(
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: accentColor,
       foregroundColor: Colors.white,
     ),
-    buttonTheme: ButtonThemeData(
+    buttonTheme: const ButtonThemeData(
       buttonColor: accentColor,
       textTheme: ButtonTextTheme.primary,
     ),
@@ -85,7 +87,7 @@ class ThemeApp {
   );
   static ThemeData darkTheme = ThemeData(
     actionIconTheme: const ActionIconThemeData(),
-    // fontFamily: FontFamily.bold,
+    fontFamily: FontFamily.appFont,
     brightness: Brightness.dark,
     primaryColor: Colors.teal,
     scaffoldBackgroundColor: Colors.grey[700],

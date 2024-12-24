@@ -87,11 +87,43 @@ class DBhelperLastUpdate {
     }
   }
 
+  insertOrdeleteBookFavorite(int idBook, String bookName) async {
+    final db = await database;
+
+    final result = await db.query(
+      'favoritive',
+      where: 'idbook = ?',
+      whereArgs: [idBook],
+    );
+
+    if (result.isNotEmpty) {
+      await db.delete(
+        'favoritive',
+        where: 'idbook = ?',
+        whereArgs: [idBook],
+      );
+    } else {
+      await db.insert('favoritive', {
+        'idbook': idBook,
+        'bookname': bookName,
+      });
+    }
+  }
+
   Future<List<Map<String, dynamic>>> getDataPageFavorite() async {
     final db = await database;
 
     final result = await db.query(
       'bookmark',
+    );
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> getDataBookFavorite() async {
+    final db = await database;
+
+    final result = await db.query(
+      'favoritive',
     );
     return result;
   }

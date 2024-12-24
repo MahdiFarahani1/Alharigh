@@ -104,13 +104,15 @@ class SettingsPage extends StatelessWidget {
                 CustomDivider.divier(),
                 _buildSectionTitle('لون الخلفية:'),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildBackgroundOption(context, Colors.white, state),
-                    _buildBackgroundOption(context, Colors.grey[200]!, state),
-                    _buildBackgroundOption(context, Colors.black, state),
-                  ],
-                ),
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: BlocProvider.of<SettingsCubit>(context)
+                        .state
+                        .backgroundPageColor
+                        .map(
+                      (color) {
+                        return _buildBackgroundOption(context, color, state);
+                      },
+                    ).toList()),
                 const SizedBox(height: 16),
                 CustomDivider.divier(),
                 _buildSectionTitle('الوضع الليلي:'),
@@ -184,16 +186,19 @@ class SettingsPage extends StatelessWidget {
                       itemBuilder: (BuildContext context, int itemIndex,
                               int pageViewIndex) =>
                           Card(
-                        color: Colors.white,
+                        color: state.selectedBackgroundColor,
                         child: SizedBox(
                           width: EsaySize.width(context),
-                          child: const Center(
+                          child: Center(
                               child: Text(
                             'بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ ',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 17,
-                                color: Colors.black),
+                                color: state.selectedBackgroundColor ==
+                                        const Color(0xFF242323)
+                                    ? Colors.white
+                                    : Colors.black),
                           )),
                         ),
                       ),
@@ -252,9 +257,12 @@ class SettingsPage extends StatelessWidget {
       child: Container(
         width: 50,
         height: 50,
-        color: color,
+        decoration: BoxDecoration(
+            color: color, border: Border.all(color: Colors.black)),
         child: state.selectedBackgroundColor == color
-            ? const Icon(Icons.check, color: Colors.black)
+            ? Icon(Icons.check,
+                color:
+                    Theme.of(context).floatingActionButtonTheme.backgroundColor)
             : null,
       ),
     );

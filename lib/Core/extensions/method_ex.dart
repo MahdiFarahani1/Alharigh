@@ -19,3 +19,15 @@ extension BookTitleExtension on Map<String, dynamic> {
         : '${this['title']}';
   }
 }
+
+extension CutString on String {
+  String cutString(int length) {
+    if (this.length > length) {
+      String cut = substring(0, length);
+      String updateString = '$cut..';
+      return updateString;
+    } else {
+      return this;
+    }
+  }
+}

@@ -9,9 +9,15 @@ class SettingsState {
   final String pageOrientation;
   final Axis axix;
   final bool isLightMode;
+  final List<Color> backgroundPageColor;
 
   SettingsState(
-      {this.selectedTheme = 'روشن',
+      {this.backgroundPageColor = const [
+        Color(0xFF242323),
+        Color(0xFFFFECB3),
+        Colors.white,
+      ],
+      this.selectedTheme = 'روشن',
       this.fontSize = 14,
       this.lineSpacing = 1.5,
       this.selectedFont = 'بهیج',

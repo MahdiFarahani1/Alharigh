@@ -22,6 +22,45 @@ class $AssetsDatabaseGen {
   List<String> get values => [booklist, db30];
 }
 
+class $AssetsFontsGen {
+  const $AssetsFontsGen();
+
+  /// File path: assets/fonts/AGCBold.ttf
+  String get aGCBold => 'assets/fonts/AGCBold.ttf';
+
+  /// File path: assets/fonts/AGCRegular.ttf
+  String get aGCRegular => 'assets/fonts/AGCRegular.ttf';
+
+  /// File path: assets/fonts/Al-Jazeera-Arabic-Bold.ttf
+  String get alJazeeraArabicBold => 'assets/fonts/Al-Jazeera-Arabic-Bold.ttf';
+
+  /// File path: assets/fonts/Al-Jazeera-Arabic-Regular.ttf
+  String get alJazeeraArabicRegular =>
+      'assets/fonts/Al-Jazeera-Arabic-Regular.ttf';
+
+  /// File path: assets/fonts/BloombergArabicBetav4-Bold.ttf
+  String get bloombergArabicBetav4Bold =>
+      'assets/fonts/BloombergArabicBetav4-Bold.ttf';
+
+  /// File path: assets/fonts/BloombergArabicBetav4-Regular.ttf
+  String get bloombergArabicBetav4Regular =>
+      'assets/fonts/BloombergArabicBetav4-Regular.ttf';
+
+  /// File path: assets/fonts/khalid-art-bold.ttf
+  String get khalidArtBold => 'assets/fonts/khalid-art-bold.ttf';
+
+  /// List of all assets
+  List<String> get values => [
+        aGCBold,
+        aGCRegular,
+        alJazeeraArabicBold,
+        alJazeeraArabicRegular,
+        bloombergArabicBetav4Bold,
+        bloombergArabicBetav4Regular,
+        khalidArtBold
+      ];
+}
+
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
@@ -49,6 +88,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/search.svg
   String get search => 'assets/images/search.svg';
 
+  /// File path: assets/images/splash.png
+  AssetGenImage get splash => const AssetGenImage('assets/images/splash.png');
+
   /// File path: assets/images/tlib.png
   AssetGenImage get tlib => const AssetGenImage('assets/images/tlib.png');
 
@@ -62,6 +104,7 @@ class $AssetsImagesGen {
         listCheck,
         menu,
         search,
+        splash,
         tlib
       ];
 }
@@ -114,6 +157,7 @@ class Assets {
   Assets._();
 
   static const $AssetsDatabaseGen database = $AssetsDatabaseGen();
+  static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsWebGen web = $AssetsWebGen();
 }

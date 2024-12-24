@@ -7,10 +7,11 @@ import 'package:flutter_application_1/Features/Books/presentation/bloc/booksApi/
 import 'package:flutter_application_1/Features/Books/presentation/bloc/categoryApi/book_group_api_cubit.dart';
 import 'package:flutter_application_1/Features/ContentBooks/presentation/bloc/search/search_group_cubit.dart';
 import 'package:flutter_application_1/Features/Home/presentation/bloc/cubit/nav_bar_cubit.dart';
-import 'package:flutter_application_1/Features/Home/presentation/home.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/bookGroup/bookgroup_cubit.dart';
 import 'package:flutter_application_1/Features/Settings/presentation/bloc/setting_cubit.dart';
+import 'package:flutter_application_1/Features/Splash/presentation/splash.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() async {
@@ -19,7 +20,7 @@ void main() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
   }
-
+  await GetStorage.init();
   runApp(const MyApp());
 }
 
@@ -55,7 +56,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeApp.lightTheme,
-        home: const HomePage(),
+        home: const Splash(),
       ),
     );
   }

@@ -7,11 +7,14 @@ import 'package:flutter_application_1/Core/database/db_helper_Content.dart';
 import 'package:flutter_application_1/Core/database/db_helper_LastUpdate.dart';
 import 'package:flutter_application_1/Core/utils/esay_size.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
+import 'package:flutter_application_1/Features/ContentBooks/presentation/bloc/saveBook/save_book_cubit.dart';
 import 'package:flutter_application_1/Features/ContentBooks/presentation/bloc/slider/slider_cubit.dart';
 import 'package:flutter_application_1/Features/ContentBooks/presentation/content_group.dart';
+import 'package:flutter_application_1/Features/ContentBooks/presentation/setting_panel.dart';
 import 'package:flutter_application_1/gen/assets.gen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
 class ContentPage extends StatefulWidget {
   final int id;
@@ -32,28 +35,18 @@ class _ContentPageState extends State<ContentPage> {
   late InAppWebViewController webViewController;
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => SliderCubit()..onChangeState(widget.scrollPosetion),
-      child: Scaffold(
-        appBar: AppBar(
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ContentGroupPage(
-                            id: widget.id,
-                            bookName: widget.bookName,
-                          ),
-                        ));
-                  },
-                  child: const Icon(Icons.menu)),
-            )
-          ],
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              SliderCubit()..onChangeState(widget.scrollPosetion),
         ),
+        BlocProvider(
+          create: (_) => IconCubit()..loadIconStatus(widget.id),
+        ),
+      ],
+      child: Scaffold(
+        appBar: appBar(context),
         body: FutureBuilder(
           future: DBhelperContent().getContentBooks(
             'b${widget.id}.sqlite',
@@ -322,6 +315,87 @@ class _ContentPageState extends State<ContentPage> {
           },
         ),
       ),
+    );
+  }
+
+  AppBar appBar(BuildContext context) {
+    return AppBar(
+      backgroundColor:
+          Theme.of(context).floatingActionButtonTheme.backgroundColor,
+      title: Text(
+        widget.bookName,
+        style: const TextStyle(color: Colors.white),
+      ),
+      centerTitle: true,
+      leadingWidth: 100,
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 10),
+        child: Row(
+          children: [
+            ZoomTapAnimation(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                )),
+            EsaySize.gap(4),
+            BlocBuilder<IconCubit, bool>(
+              builder: (context, isFilled) {
+                return ZoomTapAnimation(
+                    onTap: () async {
+                      context.read<IconCubit>().toggleIcon(widget.id);
+                      await DBhelperLastUpdate().insertOrdeleteBookFavorite(
+                          widget.id, widget.bookName);
+                    },
+                    child: Icon(
+                      isFilled ? Icons.star : Icons.star_border,
+                      color: Colors.white,
+                    ));
+              },
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            children: [
+              ZoomTapAnimation(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        DialogRoute(
+                          context: context,
+                          builder: (context) => const SettingsDialog(),
+                        ));
+                  },
+                  child: const Icon(
+                    Icons.settings,
+                    color: Colors.white,
+                  )),
+              EsaySize.gap(4),
+              ZoomTapAnimation(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ContentGroupPage(
+                            id: widget.id,
+                            bookName: widget.bookName,
+                          ),
+                        ));
+                  },
+                  child: const Icon(
+                    Icons.menu,
+                    color: Colors.white,
+                  )),
+            ],
+          ),
+        )
+      ],
     );
   }
 }

@@ -12,7 +12,7 @@ class NavBarHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomBarLabelSlide(
-      selectedIndex: 2,
+      selectedIndex: 4,
       color: Theme.of(context).floatingActionButtonTheme.backgroundColor!,
       items: [
         BottomBarItem(

@@ -14,14 +14,12 @@ class LoadedBookCubit extends Cubit<LoadedBookState> {
 
       Map<String, List<Map<String, dynamic>>> grouped = {};
       for (var book in downloadedBooks) {
-        // دریافت نام دسته با استفاده از gid
         final categoryNameResult =
             await dbHelper.getGroupBookWithGid(book['gid']);
         String categoryName = categoryNameResult.isNotEmpty
             ? categoryNameResult.first['name']
             : 'نامشخص';
 
-        // گروه‌بندی کتاب‌ها بر اساس نام دسته
         if (!grouped.containsKey(categoryName)) {
           grouped[categoryName] = [];
         }
