@@ -26,25 +26,25 @@ class NavBarHome extends StatelessWidget {
                   Assets.images.listCheck,
                   colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
                 ),
-            label: 'کتاب'),
+            label: 'كتاب'),
         BottomBarItem(
             iconBuilder: (color) => SvgPicture.asset(
                   Assets.images.book,
                   colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
                 ),
-            label: 'کتب'),
+            label: 'كتب'),
         BottomBarItem(
             iconBuilder: (color) => SvgPicture.asset(
                   Assets.images.download,
                   colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
                 ),
-            label: 'تحمیل'),
+            label: 'تحميل'),
         BottomBarItem(
             iconBuilder: (color) => SvgPicture.asset(
                   Assets.images.menu,
                   colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
                 ),
-            label: 'تصانیف'),
+            label: 'تصانيف'),
       ],
       onSelect: (index) {
         context.read<NavBarCubit>().onChangeNavBar(index);

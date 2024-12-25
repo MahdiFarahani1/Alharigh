@@ -198,6 +198,7 @@ class DBhelperBookList {
           'fav': 0,
           'last_update': lastUpdate,
           'sound_dl': 0,
+          'sound_url': sound,
           'pdf_dl': 0,
         },
         where: "id = ?",
@@ -226,6 +227,7 @@ class DBhelperBookList {
           'fav': 0,
           'last_update': lastUpdate,
           'sound_dl': 0,
+          'sound_url': sound,
           'pdf_dl': 0,
         },
       );

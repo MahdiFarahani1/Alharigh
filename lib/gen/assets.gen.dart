@@ -113,6 +113,7 @@ class $AssetsWebGen {
   const $AssetsWebGen();
 
   $AssetsWebCssGen get css => const $AssetsWebCssGen();
+  $AssetsWebHtmlGen get html => const $AssetsWebHtmlGen();
   $AssetsWebJsGen get js => const $AssetsWebJsGen();
 }
 
@@ -135,6 +136,16 @@ class $AssetsWebCssGen {
 
   /// List of all assets
   List<dynamic> get values => [bookmark1, bookmark2, bootstrapRtlMin, mhebooks];
+}
+
+class $AssetsWebHtmlGen {
+  const $AssetsWebHtmlGen();
+
+  /// File path: assets/web/html/about1.htm
+  String get about1 => 'assets/web/html/about1.htm';
+
+  /// List of all assets
+  List<String> get values => [about1];
 }
 
 class $AssetsWebJsGen {

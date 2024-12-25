@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Features/Favorite/presentation/favorite_book.dart';
 import 'package:flutter_application_1/Features/Settings/presentation/settings.dart';
+import 'package:flutter_application_1/Features/about/presentation/about_sheykh.dart';
+import 'package:flutter_application_1/gen/assets.gen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -14,17 +17,12 @@ class CustomDrawer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header Section
             DrawerHeader(
-              decoration: BoxDecoration(
-                color:
-                    Theme.of(context).floatingActionButtonTheme.backgroundColor,
-              ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [],
-              ),
-            ),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: AspectRatio(
+                    aspectRatio: 16 / 9, child: Assets.images.splash.image())),
 
             Expanded(
               child: ListView(
@@ -42,7 +40,11 @@ class CustomDrawer extends StatelessWidget {
                     icon: FontAwesomeIcons.newspaper,
                     title: "السيرة الذاتية",
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AboutSheykh(),
+                          ));
                     },
                   ),
                   DrawerItem(
@@ -79,7 +81,8 @@ class CustomDrawer extends StatelessWidget {
                     icon: Icons.share,
                     title: "مشاركة التطبيق",
                     onTap: () {
-                      Navigator.pop(context);
+                      Share.share(
+                          'https://play.google.com/store/apps/details?id=com.dijlah.SealedNectar');
                     },
                   ),
                 ],

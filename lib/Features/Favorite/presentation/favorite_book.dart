@@ -57,7 +57,7 @@ class _FavoriteBookState extends State<FavoriteBook> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ContentPage(
-                                scrollPosetion: 0,
+                                scrollPosetion: 1,
                                 id: item['idbook'],
                                 bookName: item['book_name']),
                           ));

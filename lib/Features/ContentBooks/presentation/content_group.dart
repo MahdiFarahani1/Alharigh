@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Core/database/db_helper_Content.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
 import 'package:flutter_application_1/Features/ContentBooks/presentation/bloc/search/search_group_cubit.dart';
+import 'package:flutter_application_1/Features/ContentBooks/presentation/content_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:highlight_text/highlight_text.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
@@ -63,17 +64,20 @@ class _ContentGroupPageState extends State<ContentGroupPage> {
                           BlocProvider.of<SearchGroupCubit>(context)
                               .searchWords(_textEditingController.text);
                         },
-                        child: Card(
-                            color: Theme.of(context)
-                                .floatingActionButtonTheme
-                                .backgroundColor,
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Icon(
-                                Icons.search,
-                                color: Colors.white,
-                              ),
-                            )),
+                        child: ZoomTapAnimation(
+                          onTap: () {},
+                          child: Card(
+                              color: Theme.of(context)
+                                  .floatingActionButtonTheme
+                                  .backgroundColor,
+                              child: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Icon(
+                                  Icons.search,
+                                  color: Colors.white,
+                                ),
+                              )),
+                        ),
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -120,7 +124,17 @@ class _ContentGroupPageState extends State<ContentGroupPage> {
                                   },
                                 ),
                                 trailing: Text(item['page'].toString()),
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ContentPage(
+                                            scrollPosetion:
+                                                double.parse(item['page']),
+                                            id: widget.id,
+                                            bookName: widget.bookName),
+                                      ));
+                                },
                               );
                             },
                           ),

@@ -8,6 +8,7 @@ import 'package:flutter_application_1/Features/Books/presentation/bloc/categoryA
 import 'package:flutter_application_1/Features/ContentBooks/presentation/bloc/search/search_group_cubit.dart';
 import 'package:flutter_application_1/Features/Home/presentation/bloc/cubit/nav_bar_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/bookGroup/bookgroup_cubit.dart';
+import 'package:flutter_application_1/Features/Search/presentation/bloc/cubit/search_books_cubit.dart';
 import 'package:flutter_application_1/Features/Settings/presentation/bloc/setting_cubit.dart';
 import 'package:flutter_application_1/Features/Splash/presentation/splash.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,6 +53,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => SearchGroupCubit(),
         ),
+        BlocProvider(
+          create: (_) => SearchBooksCubit(),
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

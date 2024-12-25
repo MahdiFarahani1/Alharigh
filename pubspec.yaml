@@ -61,6 +61,7 @@ dependencies:
   http: ^1.2.2
   highlight_text: ^1.8.0
   another_xlider: ^3.0.2
+  share_plus: ^10.1.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -89,6 +90,7 @@ flutter:
     - assets/fonts/
     - assets/web/js/
     - assets/web/css/
+    - assets/web/html/
     - assets/database/booklist.sqlite
     - assets/database/db3.0.sqlite
 

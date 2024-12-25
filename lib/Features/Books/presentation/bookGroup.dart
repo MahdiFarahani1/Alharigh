@@ -74,6 +74,7 @@ class _GroupsBookPageState extends State<GroupsBookPage> {
         } else {
           final groups = snapshot.data!;
           return ListView.builder(
+            addAutomaticKeepAlives: true,
             itemCount: groups.length,
             itemBuilder: (context, index) {
               final group = groups[index];
@@ -131,6 +132,7 @@ class _GroupsBookPageState extends State<GroupsBookPage> {
               ),
               Expanded(
                 child: ListView.builder(
+                  addAutomaticKeepAlives: true,
                   itemCount: content.length,
                   itemBuilder: (context, index) {
                     final item = content[index];
