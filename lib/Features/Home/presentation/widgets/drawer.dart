@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Features/Favorite/presentation/favorite_book.dart';
 import 'package:flutter_application_1/Features/Settings/presentation/settings.dart';
+import 'package:flutter_application_1/Features/about/presentation/about_app.dart';
 import 'package:flutter_application_1/Features/about/presentation/about_sheykh.dart';
 import 'package:flutter_application_1/gen/assets.gen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -52,7 +53,11 @@ class CustomDrawer extends StatelessWidget {
                     icon: FontAwesomeIcons.mobileScreen,
                     title: "حول التطبيق",
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AboutApp(),
+                          ));
                     },
                   ),
                   DrawerItem(

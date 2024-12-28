@@ -83,6 +83,7 @@ class SearchPageState extends State<SearchPage> {
               ],
             ),
             TextField(
+              controller: _textEditingController,
               onSubmitted: (value) {
                 BlocProvider.of<SearchBooksCubit>(context).searchData(
                     'b${idbook}.sqlite',
@@ -143,7 +144,7 @@ class SearchPageState extends State<SearchPage> {
 
                             var e = snapshot.data![index - 1];
                             return Container(
-                              child: Text(e['title'],
+                              child: Text(e['id'].toString(),
                                   style: TextStyle(
                                       color: selectedIndex == index
                                           ? Colors.black
@@ -174,10 +175,7 @@ class SearchPageState extends State<SearchPage> {
                         shrinkWrap: true,
                         itemCount: data.length,
                         itemBuilder: (context, index) {
-                          return SearchResultWidget(
-                              result: SearchResult(
-                                  count: int.parse(data[index]['page']),
-                                  title: data[index]['title']));
+                          return Text('data');
                         },
                       ),
                     ],

@@ -68,6 +68,32 @@ class DBhelperContent {
     return db.query('bpages', where: 'fav = ?', whereArgs: [1]);
   }
 
+  Future<List<Map<String, dynamic>>> searchBooks(
+      String dbName,
+      String searchWords,
+      bool isTitleChecked,
+      bool isDescriptionChecked) async {
+    final db = await database(dbName, '/books');
+
+    String query = '''
+    SELECT chapters.page, chapters.title, pages._text, pages.id 
+    FROM bpages AS pages
+    LEFT JOIN bgroups AS chapters ON chapters.page = pages.page 
+    WHERE
+  ''';
+
+    if (isTitleChecked && !isDescriptionChecked) {
+      query += " (title LIKE '%$searchWords%') ";
+    } else if (isDescriptionChecked && !isTitleChecked) {
+      query += " (_text LIKE '%$searchWords%') ";
+    } else if (isTitleChecked && isDescriptionChecked) {
+      query += " (_text LIKE '%$searchWords%' OR title LIKE '%$searchWords%') ";
+    }
+
+    print(searchWords);
+    return await db.rawQuery(query);
+  }
+
   updateFav(String dbName, int pageId) async {
     final db = await database(dbName, '/books');
 
@@ -99,32 +125,32 @@ class DBhelperContent {
     }
   }
 
-  Future<List<Map<String, dynamic>>> searchBooks(
-    String dbName,
-    String query,
-    bool searchInTitle,
-    bool searchInText,
-  ) async {
-    final db = await DBhelperContent().database(dbName, '/books');
+  // Future<List<Map<String, dynamic>>> searchBooks(
+  //   String dbName,
+  //   String query,
+  //   bool searchInTitle,
+  //   bool searchInText,
+  // ) async {
+  //   final db = await DBhelperContent().database(dbName, '/books');
 
-    String queryStatement = '';
+  //   String queryStatement = '';
 
-    if (searchInTitle && searchInText) {
-      queryStatement = '''
-      SELECT * FROM bpages WHERE _text LIKE '%$query%'
-      UNION
-      SELECT * FROM bgroups WHERE title LIKE '%$query%'
-    ''';
-    } else if (searchInTitle) {
-      queryStatement = "SELECT * FROM bgroups WHERE title LIKE '%$query%'";
-    } else if (searchInText) {
-      queryStatement = "SELECT * FROM bpages WHERE _text LIKE '%$query%'";
-    } else {
-      return [];
-    }
+  //   if (searchInTitle && searchInText) {
+  //     queryStatement = '''
+  //     SELECT * FROM bpages WHERE _text LIKE '%$query%'
+  //     UNION
+  //     SELECT * FROM bgroups WHERE title LIKE '%$query%'
+  //   ''';
+  //   } else if (searchInTitle) {
+  //     queryStatement = "SELECT * FROM bgroups WHERE title LIKE '%$query%'";
+  //   } else if (searchInText) {
+  //     queryStatement = "SELECT * FROM bpages WHERE _text LIKE '%$query%'";
+  //   } else {
+  //     return [];
+  //   }
 
-    return db.rawQuery(
-      queryStatement,
-    );
-  }
+  //   return db.rawQuery(
+  //     queryStatement,
+  //   );
+  // }
 }

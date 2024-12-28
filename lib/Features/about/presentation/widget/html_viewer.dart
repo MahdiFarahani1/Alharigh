@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/gen/assets.gen.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 class HtmlViewer extends StatefulWidget {
+  final String pathAbout;
+  const HtmlViewer({super.key, required this.pathAbout});
+
   @override
+  // ignore: library_private_types_in_public_api
   _HtmlViewerState createState() => _HtmlViewerState();
 }
 
@@ -20,7 +23,7 @@ class _HtmlViewerState extends State<HtmlViewer> {
 
   Future<void> _loadHtmlFromAssets() async {
     try {
-      String content = await rootBundle.loadString(Assets.web.html.about1);
+      String content = await rootBundle.loadString(widget.pathAbout);
       setState(() {
         htmlContent = content;
       });

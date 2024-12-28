@@ -144,8 +144,11 @@ class $AssetsWebHtmlGen {
   /// File path: assets/web/html/about1.htm
   String get about1 => 'assets/web/html/about1.htm';
 
+  /// File path: assets/web/html/about2.htm
+  String get about2 => 'assets/web/html/about2.htm';
+
   /// List of all assets
-  List<String> get values => [about1];
+  List<String> get values => [about1, about2];
 }
 
 class $AssetsWebJsGen {

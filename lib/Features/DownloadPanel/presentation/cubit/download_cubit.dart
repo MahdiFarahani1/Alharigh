@@ -12,8 +12,55 @@ part 'download_state.dart';
 
 class DownloadCubit extends Cubit<DownloadState> {
   DownloadCubit() : super(DownloadState());
+  Future<void> startDownloadUrl(
+    BuildContext context,
+    String url,
+    String fileName,
+    int id,
+  ) async {
+    final connectivityResult = await Connectivity().checkConnectivity();
 
-  Future<void> startDownload(
+    if (connectivityResult == ConnectivityResult.none) {
+      _showErrorDialog(context, "أنت غير متصل بالإنترنت.");
+      return;
+    }
+
+    emit(DownloadState(isLoading: true, progress: 0.0));
+
+    try {
+      // دریافت مسیر دایرکتوری برای ذخیره فایل
+      final booksDir = await localDirectoryPdf('pdf');
+
+      // تنظیم مسیر فایل
+      final filePath = '${booksDir.path}/$id.pdf';
+      print('File Path: $filePath');
+
+      // دانلود فایل
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final file = File(filePath);
+
+        // ذخیره محتوا به فایل
+        await file.writeAsBytes(
+          response.bodyBytes,
+        );
+
+        emit(DownloadState(isLoading: false, progress: 1.0));
+        Navigator.pop(context);
+      } else {
+        throw Exception(
+            'Failed to download file. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      emit(DownloadState(isLoading: false));
+      Navigator.pop(context);
+      _showErrorDialog(context, "واجه التنزيل مشكلة: ${e.toString()}");
+      print(e);
+    }
+  }
+
+  Future<void> startDownloadBook(
     BuildContext context,
     String url,
     String fileName,
@@ -31,7 +78,6 @@ class DownloadCubit extends Cubit<DownloadState> {
 
     final booksDir = await localDirectory('/books');
 
-    // Ensure the "Books" directory exists
     if (!await booksDir.exists()) {
       await booksDir.create(recursive: true);
     }

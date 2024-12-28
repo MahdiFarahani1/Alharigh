@@ -4,15 +4,15 @@ import 'package:flutter_application_1/Features/about/presentation/widget/html_vi
 import 'package:flutter_application_1/Features/about/presentation/widget/socialMedia_navbar.dart';
 import 'package:flutter_application_1/gen/assets.gen.dart';
 
-class AboutSheykh extends StatelessWidget {
-  const AboutSheykh({super.key});
+class AboutApp extends StatelessWidget {
+  const AboutApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: CustomSimpleAppbar.appbar(context, "السيرة الذاتية"),
+        appBar: CustomSimpleAppbar.appbar(context, "حول التطبيق"),
         body: HtmlViewer(
-          pathAbout: Assets.web.html.about1,
+          pathAbout: Assets.web.html.about2,
         ),
         bottomNavigationBar: const SoicalNavBar());
   }

@@ -3,7 +3,7 @@ import 'package:flutter_application_1/Core/constant/api_const.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/allbookList/book_all_list_data_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/booksApi/book_api_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/widget/book_download_item.dart';
-import 'package:flutter_application_1/Features/DownloadPanel/presentation/download_panel.dart';
+import 'package:flutter_application_1/Features/DownloadPanel/presentation/download_book.dart';
 import 'package:flutter_application_1/gen/assets.gen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -79,7 +79,7 @@ class _AllBooksPageState extends State<AllBooksPage> {
                         context,
                         DialogRoute(
                           context: context,
-                          builder: (context) => DownloadPanel(
+                          builder: (context) => DownloadBook(
                             downloadPath: '${item['id']}.zip',
                             url:
                                 ApiConstant.downloadUrl + item['id'].toString(),

@@ -10,7 +10,7 @@ import 'package:flutter_application_1/Features/Books/presentation/bloc/bookGroup
 import 'package:flutter_application_1/Features/Books/presentation/widget/book_download_item.dart';
 import 'package:flutter_application_1/Features/Books/presentation/widget/book_group_item.dart';
 import 'package:flutter_application_1/Features/Books/repository/book_gid.dart';
-import 'package:flutter_application_1/Features/DownloadPanel/presentation/download_panel.dart';
+import 'package:flutter_application_1/Features/DownloadPanel/presentation/download_book.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GroupsBookPage extends StatefulWidget {
@@ -151,7 +151,7 @@ class _GroupsBookPageState extends State<GroupsBookPage> {
                             context,
                             DialogRoute(
                               context: context,
-                              builder: (context) => DownloadPanel(
+                              builder: (context) => DownloadBook(
                                 downloadPath: '${item['id']}.zip',
                                 url: ApiConstant.downloadUrl +
                                     item['id'].toString(),
