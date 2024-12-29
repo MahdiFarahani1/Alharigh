@@ -74,24 +74,29 @@ class DBhelperContent {
       bool isTitleChecked,
       bool isDescriptionChecked) async {
     final db = await database(dbName, '/books');
+    List<Map<String, dynamic>> results = [];
 
-    String query = '''
-    SELECT chapters.page, chapters.title, pages._text, pages.id 
-    FROM bpages AS pages
-    LEFT JOIN bgroups AS chapters ON chapters.page = pages.page 
-    WHERE
-  ''';
+    if (isTitleChecked) {
+      final titleResults = await db.query(
+        'bgroups',
+        where: 'title LIKE ?',
+        whereArgs: ['%$searchWords%'],
+      );
 
-    if (isTitleChecked && !isDescriptionChecked) {
-      query += " (title LIKE '%$searchWords%') ";
-    } else if (isDescriptionChecked && !isTitleChecked) {
-      query += " (_text LIKE '%$searchWords%') ";
-    } else if (isTitleChecked && isDescriptionChecked) {
-      query += " (_text LIKE '%$searchWords%' OR title LIKE '%$searchWords%') ";
+      results.addAll(titleResults);
     }
 
-    print(searchWords);
-    return await db.rawQuery(query);
+    if (isDescriptionChecked) {
+      final descriptionResults = await db.query(
+        'bpages',
+        where: '_text LIKE ?',
+        whereArgs: ['%$searchWords%'],
+      );
+
+      results.addAll(descriptionResults);
+    }
+
+    return results;
   }
 
   updateFav(String dbName, int pageId) async {

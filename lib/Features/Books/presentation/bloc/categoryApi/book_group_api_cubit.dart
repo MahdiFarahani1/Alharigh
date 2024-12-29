@@ -43,7 +43,7 @@ class BookGroupApiCubit extends Cubit<BookGroupApiState> {
             await DBhelperLastUpdate().updateLastUpdate(modelBooks.lastUpdate!);
           }
         } catch (e) {
-          emit(BookGroupApiState(status: ErrorBookGroup()));
+          emit(BookGroupApiState(status: ErrorBookGroup(error: e.toString())));
         }
       } else {
         emit(BookGroupApiState(status: LoadedDataBookGroup()));

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Core/database/db_helper_BookList.dart';
+import 'package:flutter_application_1/Core/extensions/method_ex.dart';
 import 'package:flutter_application_1/Core/utils/esay_size.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
+import 'package:flutter_application_1/Core/utils/remove_html_tags.dart';
+import 'package:flutter_application_1/Features/ContentBooks/presentation/content_page.dart';
 import 'package:flutter_application_1/Features/Search/presentation/bloc/cubit/search_books_cubit.dart';
 import 'package:flutter_application_1/Features/Search/presentation/bloc/cubit/status_search.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+// ignore: must_be_immutable
 class SearchPage extends StatefulWidget {
   String searchQuery;
 
@@ -19,6 +23,8 @@ class SearchPageState extends State<SearchPage> {
   int selectedIndex = 0;
   bool titleBool = true, contentBool = true;
   int idbook = 0;
+  String bookname = '';
+
   final TextEditingController _textEditingController = TextEditingController();
 
   @override
@@ -89,7 +95,8 @@ class SearchPageState extends State<SearchPage> {
                     'b${idbook}.sqlite',
                     _textEditingController.text,
                     titleBool,
-                    contentBool);
+                    contentBool,
+                    idbook);
               },
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.search),
@@ -122,8 +129,10 @@ class SearchPageState extends State<SearchPage> {
                               selectedIndex = value;
                               if (value == 0) {
                                 idbook = 0;
+                                bookname = '';
                               } else {
                                 idbook = snapshot.data![value - 1]['id'];
+                                bookname = snapshot.data![value - 1]['title'];
                               }
                             },
                           );
@@ -131,25 +140,26 @@ class SearchPageState extends State<SearchPage> {
                         childDelegate: ListWheelChildBuilderDelegate(
                           builder: (context, index) {
                             if (index == 0) {
-                              return Container(
-                                child: Text(
-                                  'الکل',
-                                  style: TextStyle(
-                                      color: selectedIndex == index
-                                          ? Colors.black
-                                          : Colors.black12),
-                                ),
+                              return Text(
+                                'الکل',
+                                style: TextStyle(
+                                    color: selectedIndex == index
+                                        ? Colors.black
+                                        : Colors.black12),
                               );
                             }
 
                             var e = snapshot.data![index - 1];
-                            return Container(
-                              child: Text(e['id'].toString(),
-                                  style: TextStyle(
-                                      color: selectedIndex == index
-                                          ? Colors.black
-                                          : Colors.black12)),
-                            );
+                            bool havePart = e['joz'] != 0;
+
+                            return Text(
+                                havePart
+                                    ? '${e['title']} الجزء ${e['joz']}'
+                                    : '${e['title']}',
+                                style: TextStyle(
+                                    color: selectedIndex == index
+                                        ? Colors.black
+                                        : Colors.black12));
                           },
                           childCount: snapshot.data!.length + 1,
                         ),
@@ -163,19 +173,54 @@ class SearchPageState extends State<SearchPage> {
               builder: (context, state) {
                 if (state.status is SearchSuccess) {
                   final data = (state.status as SearchSuccess).data;
+
                   return Column(
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         child: Text(
-                            "نتائج البحث عن «${widget.searchQuery} 324243 نتيجة"),
+                            "نتائج البحث عن <${widget.searchQuery}> ${data.length} نتيجة"),
                       ),
                       ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: data.length,
                         itemBuilder: (context, index) {
-                          return Text('data');
+                          String withoutTagText =
+                              removeHtmlTags(data[index]['_text'] ?? '');
+                          bool havePart = data[index]['joz'] != 0 &&
+                              data[index].containsKey('joz');
+                          String? title = havePart
+                              ? '${data[index]['title']} الجزء ${data[index]['joz']}'
+                              : '${data[index]['title'] ?? withoutTagText.cutString(30)}';
+                          return SearchResultWidget(
+                              result: SearchResult(
+                                  onTap: () {
+                                    if (idbook == 0) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ContentPage(
+                                                id: data[index]['id'],
+                                                bookName: data[index]['title'],
+                                                scrollPosetion: 1),
+                                          ));
+                                    } else {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ContentPage(
+                                                id: idbook,
+                                                bookName: bookname,
+                                                scrollPosetion: double.parse(
+                                                    data[index]['page'])),
+                                          ));
+                                    }
+                                  },
+                                  count: idbook == 0
+                                      ? data[index]['id']
+                                      : int.parse(data[index]['page']),
+                                  title: title));
                         },
                       ),
                     ],
@@ -206,8 +251,8 @@ class SearchPageState extends State<SearchPage> {
 class SearchResult {
   final String title;
   final int count;
-
-  SearchResult({required this.title, required this.count});
+  final VoidCallback onTap;
+  SearchResult({required this.title, required this.count, required this.onTap});
 }
 
 class SearchResultWidget extends StatelessWidget {
@@ -219,6 +264,9 @@ class SearchResultWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
+        onTap: () {
+          result.onTap();
+        },
         leading: const Icon(Icons.description),
         title: Text(result.title),
         trailing: Text(result.count.toString()),

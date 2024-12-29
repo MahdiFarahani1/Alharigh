@@ -52,8 +52,9 @@ class _GroupsBookPageState extends State<GroupsBookPage> {
         }
 
         if (state.status is ErrorBookGroup) {
-          return const Center(
-            child: Text('error'),
+          String error = (state.status as ErrorBookGroup).error;
+          return Center(
+            child: Text(error),
           );
         }
         return const SizedBox();
