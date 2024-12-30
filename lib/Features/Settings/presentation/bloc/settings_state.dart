@@ -13,17 +13,17 @@ class SettingsState {
 
   SettingsState(
       {this.backgroundPageColor = const [
-        Color(0xFF242323),
-        Color(0xFFFFECB3),
-        Colors.white,
+        Color.fromARGB(255, 36, 35, 35),
+        Color.fromARGB(255, 255, 236, 179),
+        Color.fromARGB(255, 255, 255, 255),
       ],
       this.selectedTheme = 'روشن',
       this.fontSize = 14,
       this.lineSpacing = 1.5,
       this.selectedFont = 'بهیج',
-      this.selectedBackgroundColor = Colors.white,
+      this.selectedBackgroundColor = const Color.fromRGBO(141, 110, 99, 1),
       this.pageOrientation = 'عمودی',
-      this.axix = Axis.horizontal,
+      this.axix = Axis.vertical,
       this.isLightMode = true});
 
   SettingsState copyWith({

@@ -67,7 +67,7 @@ html {
 .book-mark {
   position: absolute;
   display: flex;
-  color: #eee;
+  color: rgb(238, 238, 238);
   left: 20px;
   top: 0;
   transition: 0.3s;
@@ -96,6 +96,7 @@ html {
   overflow-x: hidden !important;
   /* display: none !important; */
 }
+
 
 .mark {
   background: #ffff00;
@@ -251,7 +252,7 @@ hr.fnote {
 
 .centertxt {
   text-align: center;
-  color: #c60;
+  color: rgb(204, 102, 0);
 }
 .centertxt2 {
   text-align: center;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Core/common/common_snackBar.dart';
 import 'package:flutter_application_1/Core/extensions/widget_ex.dart';
 import 'package:flutter_application_1/Features/Search/presentation/search.dart';
 import 'package:flutter_application_1/gen/assets.gen.dart';
@@ -98,16 +99,7 @@ class AppbarHome extends StatelessWidget {
             ),
           ));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12), topRight: Radius.circular(12))),
-        showCloseIcon: true,
-        content: Directionality(
-            textDirection: TextDirection.rtl,
-            child: Text('فیلد جستجو نمی تواند خالی باشد!')),
-        backgroundColor: Colors.red,
-      ));
+      CustomSnackBar.show(context, message: 'فیلد جستجو نمی تواند خالی باشد!');
     }
   }
 }

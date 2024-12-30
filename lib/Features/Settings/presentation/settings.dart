@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Core/common/common_snackBar.dart';
 import 'package:flutter_application_1/Core/utils/esay_size.dart';
 import 'package:flutter_application_1/Core/widgets/divider.dart';
 import 'package:flutter_application_1/Features/Settings/presentation/bloc/setting_cubit.dart';
@@ -12,6 +13,13 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Color> themeColor = [
+      Colors.blue,
+      Colors.brown.shade400,
+      Colors.grey,
+      Colors.green,
+      Colors.indigo.shade400
+    ];
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -36,13 +44,11 @@ class SettingsPage extends StatelessWidget {
                 EsaySize.gap(12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildColorOption(context, Colors.blue, state),
-                    _buildColorOption(context, Colors.brown, state),
-                    _buildColorOption(context, Colors.grey, state),
-                    _buildColorOption(context, Colors.green, state),
-                    _buildColorOption(context, Colors.teal, state),
-                  ],
+                  children: themeColor
+                      .map(
+                        (col) => _buildColorOption(context, col, state),
+                      )
+                      .toList(),
                 ),
                 const SizedBox(height: 16),
                 CustomDivider.divier(),
@@ -231,7 +237,14 @@ class SettingsPage extends StatelessWidget {
       BuildContext context, Color color, SettingsState state) {
     final cubit = context.read<SettingsCubit>();
     return GestureDetector(
-      onTap: () => cubit.changeBackgroundColor(color),
+      onTap: () {
+        if (state.isLightMode) {
+          cubit.changeBackgroundColor(color);
+        } else {
+          CustomSnackBar.show(context,
+              message: 'لطفا برای تغییر رنگ اول حالت اپ را به روز تغییر دهید');
+        }
+      },
       child: Container(
         width: 30,
         height: 30,

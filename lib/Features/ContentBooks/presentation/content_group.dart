@@ -129,10 +129,11 @@ class _ContentGroupPageState extends State<ContentGroupPage> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => ContentPage(
-                                            scrollPosetion:
-                                                double.parse(item['page']),
-                                            id: widget.id,
-                                            bookName: widget.bookName),
+                                          scrollPosetion:
+                                              double.parse(item['page']),
+                                          id: widget.id,
+                                          bookName: widget.bookName,
+                                        ),
                                       ));
                                 },
                               );

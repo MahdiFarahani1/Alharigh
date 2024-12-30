@@ -10,6 +10,7 @@ import 'package:flutter_application_1/Features/Home/presentation/bloc/cubit/nav_
 import 'package:flutter_application_1/Features/Books/presentation/bloc/bookGroup/bookgroup_cubit.dart';
 import 'package:flutter_application_1/Features/Search/presentation/bloc/cubit/search_books_cubit.dart';
 import 'package:flutter_application_1/Features/Settings/presentation/bloc/setting_cubit.dart';
+import 'package:flutter_application_1/Features/Settings/presentation/bloc/settings_state.dart';
 import 'package:flutter_application_1/Features/Splash/presentation/splash.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_storage/get_storage.dart';
@@ -57,10 +58,14 @@ class MyApp extends StatelessWidget {
           create: (_) => SearchBooksCubit(),
         )
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeApp.lightTheme,
-        home: const Splash(),
+      child: BlocBuilder<SettingsCubit, SettingsState>(
+        builder: (context, state) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeApp.lightTheme(state.selectedBackgroundColor),
+            home: const Splash(),
+          );
+        },
       ),
     );
   }

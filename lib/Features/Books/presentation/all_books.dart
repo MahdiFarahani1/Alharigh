@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Core/constant/api_const.dart';
+import 'package:flutter_application_1/Core/utils/loading.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/allbookList/book_all_list_data_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/booksApi/book_api_cubit.dart';
+import 'package:flutter_application_1/Features/Books/presentation/bloc/search_download_page/search_downloaded_book_page_cubit.dart';
+import 'package:flutter_application_1/Features/Books/presentation/bloc/search_download_page/status.dart';
 import 'package:flutter_application_1/Features/Books/presentation/widget/book_download_item.dart';
 import 'package:flutter_application_1/Features/DownloadPanel/presentation/download_book.dart';
 import 'package:flutter_application_1/gen/assets.gen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
 class AllBooksPage extends StatefulWidget {
   const AllBooksPage({super.key});
@@ -16,6 +20,7 @@ class AllBooksPage extends StatefulWidget {
 }
 
 class _AllBooksPageState extends State<AllBooksPage> {
+  TextEditingController _textEditingController = TextEditingController();
   @override
   void initState() {
     BlocProvider.of<BookApiCubit>(context).fetchData();
@@ -25,7 +30,10 @@ class _AllBooksPageState extends State<AllBooksPage> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildContentList();
+    return BlocProvider(
+      create: (context) => SearchDownloadedBookPageCubit(),
+      child: _buildContentList(),
+    );
   }
 
   Widget _buildContentList() {
@@ -33,64 +41,173 @@ class _AllBooksPageState extends State<AllBooksPage> {
         builder: (context, state) {
       return Column(
         children: [
-          Container(
-            margin: const EdgeInsets.all(8),
-            width: 160,
-            height: 40,
-            decoration: BoxDecoration(
-                color:
-                    Theme.of(context).floatingActionButtonTheme.backgroundColor,
-                borderRadius: BorderRadius.circular(8)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 12, top: 2, bottom: 2),
-                  child: SvgPicture.asset(
-                    Assets.images.download,
-                    color: Colors.white,
-                  ),
+          Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.all(8),
+                width: 160,
+                height: 40,
+                decoration: BoxDecoration(
+                    color: Theme.of(context)
+                        .floatingActionButtonTheme
+                        .backgroundColor,
+                    borderRadius: BorderRadius.circular(8)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 12, top: 2, bottom: 2),
+                      child: SvgPicture.asset(
+                        Assets.images.download,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(right: 12),
+                      child: Text(
+                        'دانلود همه',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(right: 12),
-                  child: Text(
-                    'دانلود همه',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: state.length,
-              itemBuilder: (context, index) {
-                final item = state[index];
-
-                bool havePart = item['joz'] != 0;
-
-                return BookDownloadItem(
-                  isDownloaded: false,
-                  title: havePart
-                      ? item['title'] + " " 'الجزء' " " + item['joz'].toString()
-                      : item['title'],
-                  onTap: () async {
-                    Navigator.push(
-                        context,
-                        DialogRoute(
-                          context: context,
-                          builder: (context) => DownloadBook(
-                            downloadPath: '${item['id']}.zip',
-                            url:
-                                ApiConstant.downloadUrl + item['id'].toString(),
-                            id: item['id'],
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    height: 40,
+                    child: Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: TextField(
+                        controller: _textEditingController,
+                        onSubmitted: (value) {
+                          BlocProvider.of<SearchDownloadedBookPageCubit>(
+                                  context)
+                              .search(state, _textEditingController.text);
+                        },
+                        decoration: InputDecoration(
+                          prefixIcon: ZoomTapAnimation(
+                            onTap: () {
+                              BlocProvider.of<SearchDownloadedBookPageCubit>(
+                                      context)
+                                  .search(state, _textEditingController.text);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .floatingActionButtonTheme
+                                      .backgroundColor,
+                                  borderRadius: const BorderRadius.only(
+                                      topRight: Radius.circular(8),
+                                      bottomRight: Radius.circular(8))),
+                              width: 40,
+                              height: 40,
+                              child:
+                                  const Icon(Icons.search, color: Colors.white),
+                            ),
                           ),
-                        ));
-                  },
-                );
-              },
-            ),
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 12),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
+          BlocBuilder<SearchDownloadedBookPageCubit,
+              SearchDownloadedBookPageState>(
+            builder: (context, stateSearch) {
+              if (stateSearch.status is SearchDownloadBookLoading) {
+                return Center(
+                  child: CustomLoading.fadingCircle(context),
+                );
+              }
+              if (stateSearch.status is SearchDownloadBookError) {
+                return Center(
+                  child: Text('error'),
+                );
+              }
+              if (stateSearch.status is SearchDownloadBookInit) {
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: state.length,
+                    itemBuilder: (context, index) {
+                      final item = state[index];
+
+                      bool havePart = item['joz'] != 0;
+
+                      return BookDownloadItem(
+                        isDownloaded: false,
+                        title: havePart
+                            ? item['title'] +
+                                " " 'الجزء' " " +
+                                item['joz'].toString()
+                            : item['title'],
+                        onTap: () async {
+                          Navigator.push(
+                              context,
+                              DialogRoute(
+                                context: context,
+                                builder: (context) => DownloadBook(
+                                  downloadPath: '${item['id']}.zip',
+                                  url: ApiConstant.downloadUrl +
+                                      item['id'].toString(),
+                                  id: item['id'],
+                                ),
+                              ));
+                        },
+                      );
+                    },
+                  ),
+                );
+              }
+              if (stateSearch.status is SearchDownloadBookComplete) {
+                List searchData =
+                    (stateSearch.status as SearchDownloadBookComplete).data;
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: searchData.length,
+                    itemBuilder: (context, index) {
+                      final item = searchData[index];
+
+                      bool havePart = item['joz'] != 0;
+
+                      return BookDownloadItem(
+                        isDownloaded: false,
+                        title: havePart
+                            ? item['title'] +
+                                " " 'الجزء' " " +
+                                item['joz'].toString()
+                            : item['title'],
+                        onTap: () async {
+                          Navigator.push(
+                              context,
+                              DialogRoute(
+                                context: context,
+                                builder: (context) => DownloadBook(
+                                  downloadPath: '${item['id']}.zip',
+                                  url: ApiConstant.downloadUrl +
+                                      item['id'].toString(),
+                                  id: item['id'],
+                                ),
+                              ));
+                        },
+                      );
+                    },
+                  ),
+                );
+              }
+              return const SizedBox();
+            },
+          )
         ],
       );
     });

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Core/common/common_snackBar.dart';
 import 'package:flutter_application_1/Features/LoadedBooks/repository/print.dart';
 
 void showPrintDialog(
@@ -61,11 +62,8 @@ void showPrintDialog(
                         startPage < 1 ||
                         endPage > pages.length ||
                         startPage > endPage) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('مقادیر واردشده نامعتبر هستند!'),
-                        ),
-                      );
+                      CustomSnackBar.show(context,
+                          message: 'مقادیر واردشده نامعتبر هستند!');
                       return;
                     }
 
