@@ -57,7 +57,7 @@ class _ContentGroupPageState extends State<ContentGroupPage> {
                   child: TextField(
                     controller: _textEditingController,
                     decoration: InputDecoration(
-                      hintText: 'جستجو...',
+                      hintText: 'بحث...',
                       hintStyle: const TextStyle(color: Colors.grey),
                       suffixIcon: ZoomTapAnimation(
                         onTap: () {

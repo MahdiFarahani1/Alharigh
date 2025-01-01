@@ -58,7 +58,7 @@ class AppbarHome extends StatelessWidget {
                       ),
                     ),
                   ),
-                  hintText: "جستجو...",
+                  hintText: "بحث...",
                   hintStyle: const TextStyle(fontSize: 15, color: Colors.grey)),
             ),
           ),

@@ -6,6 +6,7 @@ import 'package:flutter_application_1/Features/Books/presentation/bloc/booksApi/
 import 'package:flutter_application_1/Features/Books/presentation/bloc/search_download_page/search_downloaded_book_page_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/search_download_page/status.dart';
 import 'package:flutter_application_1/Features/Books/presentation/widget/book_download_item.dart';
+import 'package:flutter_application_1/Features/DownloadPanel/presentation/cubit/download_cubit.dart';
 import 'package:flutter_application_1/Features/DownloadPanel/presentation/download_book.dart';
 import 'package:flutter_application_1/gen/assets.gen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +21,7 @@ class AllBooksPage extends StatefulWidget {
 }
 
 class _AllBooksPageState extends State<AllBooksPage> {
-  TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _textEditingController = TextEditingController();
   @override
   void initState() {
     BlocProvider.of<BookApiCubit>(context).fetchData();
@@ -30,8 +31,12 @@ class _AllBooksPageState extends State<AllBooksPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => SearchDownloadedBookPageCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => SearchDownloadedBookPageCubit(),
+        ),
+      ],
       child: _buildContentList(),
     );
   }
@@ -43,34 +48,51 @@ class _AllBooksPageState extends State<AllBooksPage> {
         children: [
           Row(
             children: [
-              Container(
-                margin: const EdgeInsets.all(8),
-                width: 160,
-                height: 40,
-                decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .floatingActionButtonTheme
-                        .backgroundColor,
-                    borderRadius: BorderRadius.circular(8)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(left: 12, top: 2, bottom: 2),
-                      child: SvgPicture.asset(
-                        Assets.images.download,
-                        color: Colors.white,
+              ZoomTapAnimation(
+                onTap: () {
+                  for (var book in state) {
+                    Navigator.push(
+                        context,
+                        DialogRoute(
+                          context: context,
+                          builder: (context) => DownloadBook(
+                            downloadPath: '${book['id']}.zip',
+                            url:
+                                ApiConstant.downloadUrl + book['id'].toString(),
+                            id: book['id'],
+                          ),
+                        ));
+                  }
+                },
+                child: Container(
+                  margin: const EdgeInsets.all(8),
+                  width: 160,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .floatingActionButtonTheme
+                          .backgroundColor,
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 12, top: 2, bottom: 2),
+                        child: SvgPicture.asset(
+                          Assets.images.download,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(right: 12),
-                      child: Text(
-                        'دانلود همه',
-                        style: TextStyle(color: Colors.white),
+                      const Padding(
+                        padding: EdgeInsets.only(right: 12),
+                        child: Text(
+                          'دانلود همه',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               Expanded(
@@ -131,7 +153,7 @@ class _AllBooksPageState extends State<AllBooksPage> {
                 );
               }
               if (stateSearch.status is SearchDownloadBookError) {
-                return Center(
+                return const Center(
                   child: Text('error'),
                 );
               }

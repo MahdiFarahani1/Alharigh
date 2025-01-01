@@ -20,8 +20,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (!Platform.isAndroid && !Platform.isIOS) {
     sqfliteFfiInit();
+
     databaseFactory = databaseFactoryFfi;
   }
+
   await GetStorage.init();
   runApp(const MyApp());
 }
@@ -56,7 +58,7 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => SearchBooksCubit(),
-        )
+        ),
       ],
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {

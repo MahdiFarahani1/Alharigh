@@ -1,3 +1,6 @@
+
+var horizontal_container = document.querySelector('.book-container-horizontal');
+
 function search(query) {
   $(".book_text").each(function () {
     var $this = $(this);
