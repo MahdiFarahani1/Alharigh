@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Core/common/common_diolog.dart';
 import 'package:flutter_application_1/Core/database/db_helper_BookList.dart';
 import 'package:flutter_application_1/Core/database/db_helper_Content.dart';
 import 'package:flutter_application_1/Core/utils/directory_app.dart';
@@ -118,50 +119,20 @@ class _DownloadedBookListPageState extends State<DownloadedBookListPage> {
                                   children: [
                                     iconItem(context, icon: Icons.delete,
                                         onTap: () async {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: const Text(
-                                            'تأكيد الحذف',
-                                            textDirection: TextDirection.rtl,
-                                          ),
-                                          content: const Text(
-                                            'هل أنت متأكد أنك تريد حذف الكتاب؟',
-                                            textDirection: TextDirection.rtl,
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text(
-                                                'إلغاء',
-                                                textDirection:
-                                                    TextDirection.rtl,
-                                              ),
-                                            ),
-                                            TextButton(
-                                              onPressed: () async {
-                                                await DBhelperBookList()
-                                                    .updateDownload(
-                                                        book['id'], 0);
-                                                deleteFile(
-                                                    '/storage/emulated/0/Download/Books/${book['id']}.zip');
-                                                deleteFile(
-                                                    '/storage/emulated/0/Download/Books/${book['id']}.jpg');
-                                                deleteFile(
-                                                    '/storage/emulated/0/Download/Books/b${book['id']}.sqlite');
-                                                setState(() {});
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text(
-                                                'تأكيد',
-                                                textDirection:
-                                                    TextDirection.rtl,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                      CustomDialog.showDeleteDilog(
+                                        context,
+                                        onTap: () async {
+                                          await DBhelperBookList()
+                                              .updateDownload(book['id'], 0);
+                                          deleteFile(
+                                              '/storage/emulated/0/Download/Books/${book['id']}.zip');
+                                          deleteFile(
+                                              '/storage/emulated/0/Download/Books/${book['id']}.jpg');
+                                          deleteFile(
+                                              '/storage/emulated/0/Download/Books/b${book['id']}.sqlite');
+                                          setState(() {});
+                                          Navigator.of(context).pop();
+                                        },
                                       );
                                     }),
                                     iconItem(context, icon: Icons.print,

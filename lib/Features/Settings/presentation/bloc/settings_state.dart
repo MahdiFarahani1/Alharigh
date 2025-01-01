@@ -23,7 +23,7 @@ class SettingsState {
       this.selectedFont = 'بهیج',
       this.selectedBackgroundColor = const Color.fromRGBO(141, 110, 99, 1),
       this.pageOrientation = 'عمودی',
-      this.axix = Axis.vertical,
+      this.axix = Axis.horizontal,
       this.isLightMode = true});
 
   SettingsState copyWith({

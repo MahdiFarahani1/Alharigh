@@ -110,6 +110,47 @@ class DBhelperLastUpdate {
     }
   }
 
+  insertComment(int idBook, int idPage, String bookName, String comment) async {
+    final db = await database;
+
+    await db.insert('comments', {
+      'idbook': idBook,
+      'bookname': bookName,
+      'comment': comment,
+      'idpage': idPage
+    });
+  }
+
+  updateComment(int id, String text) async {
+    final db = await database;
+    await db.update(
+      'comments',
+      {
+        'comment': text,
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  deleteComment(int id) async {
+    final db = await database;
+    await db.delete(
+      'comments',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getComments() async {
+    final db = await database;
+
+    final result = await db.query(
+      'comments',
+    );
+    return result;
+  }
+
   Future<List<Map<String, dynamic>>> getDataPageFavorite() async {
     final db = await database;
 

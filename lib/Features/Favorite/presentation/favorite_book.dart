@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Core/common/common_diolog.dart';
 import 'package:flutter_application_1/Core/database/db_helper_LastUpdate.dart';
 import 'package:flutter_application_1/Features/ContentBooks/presentation/content_page.dart';
 import 'package:get_storage/get_storage.dart';
@@ -72,21 +73,21 @@ class _FavoriteBookState extends State<FavoriteBook> {
                           item['bookname'],
                           style: const TextStyle(color: Colors.white),
                         ),
-                        // subtitle: Text(
-                        //   'شماره صفحه: ${item['idpage']}',
-                        //   style: const TextStyle(color: Colors.white),
-                        // ),
                         trailing: IconButton(
                             icon: const Icon(
                               Icons.delete,
                               color: Colors.redAccent,
                             ),
                             onPressed: () async {
-                              // await DBhelperContent().updateFav(
-                              //     'b${item['idbook']}.sqlite', item['idpage']);
-                              _deleteItem(
-                                item['idbook'],
-                                item['bookname'],
+                              CustomDialog.showDeleteDilog(
+                                context,
+                                onTap: () {
+                                  _deleteItem(
+                                    item['idbook'],
+                                    item['bookname'],
+                                  );
+                                  Navigator.pop(context);
+                                },
                               );
                             }),
                       ),
