@@ -16,11 +16,12 @@ class DownloadCubit extends Cubit<DownloadState> {
     BuildContext context,
     String url,
     String fileName,
+    String filePath,
     int id,
   ) async {
     final connectivityResult = await Connectivity().checkConnectivity();
 
-    if (connectivityResult == ConnectivityResult.none) {
+    if (connectivityResult.contains(ConnectivityResult.none)) {
       _showErrorDialog(context, "أنت غير متصل بالإنترنت.");
       return;
     }
@@ -28,11 +29,6 @@ class DownloadCubit extends Cubit<DownloadState> {
     emit(DownloadState(isLoading: true, progress: 0.0));
 
     try {
-      // دریافت مسیر دایرکتوری برای ذخیره فایل
-      final booksDir = await localDirectoryPdf('pdf');
-
-      // تنظیم مسیر فایل
-      final filePath = '${booksDir.path}/$id.pdf';
       print('File Path: $filePath');
 
       // دانلود فایل

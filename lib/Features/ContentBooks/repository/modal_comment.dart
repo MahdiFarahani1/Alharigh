@@ -30,7 +30,7 @@ class ModalComment {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
-                  'نظر خود را وارد کنید',
+                  "أدخل تعليقك",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
@@ -47,7 +47,7 @@ class ModalComment {
                   onPressed: () {
                     if (_controller.text.isEmpty) {
                       CustomSnackBar.show(context,
-                          message: 'فیلد نظر نمی تواند خالی باشد');
+                          message: "لا يمكن أن يكون حقل التعليق فارغًا");
                     } else {
                       DBhelperLastUpdate dbhelper = DBhelperLastUpdate();
                       if (updateMode) {
@@ -59,7 +59,7 @@ class ModalComment {
                       Navigator.pop(context);
                     }
                   },
-                  child: const Text('ارسال'),
+                  child: const Text('يرسل'),
                 ),
               ],
             ),

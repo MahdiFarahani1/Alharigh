@@ -16,8 +16,8 @@ class BookGroupApiCubit extends Cubit<BookGroupApiState> {
     if (!OneTimeCheck.isCheck) {
       emit(BookGroupApiState(status: LoadingBookGroup()));
 
-      var _connection = await CheckConnection().checkInternetConnection();
-      if (_connection) {
+      var connection = await CheckConnection().checkInternetConnection();
+      if (connection) {
         try {
           final lastUpdate = await DBhelperLastUpdate().getLastUpdate();
 

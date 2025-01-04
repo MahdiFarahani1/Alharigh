@@ -1,112 +1,111 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Core/common/common_diolog.dart';
 import 'package:flutter_application_1/Core/database/db_helper_LastUpdate.dart';
+import 'package:flutter_application_1/Core/utils/loading.dart';
+import 'package:flutter_application_1/Core/widgets/icon.dart';
 import 'package:flutter_application_1/Features/ContentBooks/presentation/content_page.dart';
+import 'package:flutter_application_1/Features/Favorite/presentation/bloc/List_Custom/list_custom_items_cubit.dart';
+import 'package:flutter_application_1/Features/Favorite/presentation/bloc/List_Custom/status.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
-class FavoriteBook extends StatefulWidget {
-  const FavoriteBook({super.key});
+class FavoriteBook extends StatelessWidget {
+  FavoriteBook({super.key});
 
-  @override
-  State<FavoriteBook> createState() => _FavoriteBookState();
-}
-
-class _FavoriteBookState extends State<FavoriteBook> {
   final DBhelperLastUpdate _dbHelper = DBhelperLastUpdate();
-  List<Map<String, dynamic>> _items = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadItems();
-  }
-
-  Future<void> _loadItems() async {
-    final items = await _dbHelper.getDataBookFavorite();
-    setState(() {
-      _items = items;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(
-          iconTheme: const IconThemeData(color: Colors.white),
-          backgroundColor:
-              Theme.of(context).floatingActionButtonTheme.backgroundColor,
-          centerTitle: true,
-          title: const Text(
-            'المفضلة',
-            style: TextStyle(color: Colors.white),
+    return BlocProvider(
+      create: (context) =>
+          ListCustomItemsCubit()..fetchData(_dbHelper.getDataBookFavorite()),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          appBar: AppBar(
+            iconTheme: const IconThemeData(color: Colors.white),
+            backgroundColor:
+                Theme.of(context).floatingActionButtonTheme.backgroundColor,
+            centerTitle: true,
+            title: const Text(
+              'المفضلة',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
-        ),
-        body: _items.isEmpty
-            ? const Center(
-                child: Text('هیچ آیتمی ذخیره نشده است!'),
-              )
-            : ListView.builder(
-                itemCount: _items.length,
-                itemBuilder: (context, index) {
-                  final item = _items[index];
-                  return ZoomTapAnimation(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ContentPage(
-                                scrollPosetion: 1,
-                                id: item['idbook'],
-                                bookName: item['book_name']),
-                          ));
-                    },
-                    child: Card(
-                      color: Theme.of(context)
-                          .floatingActionButtonTheme
-                          .backgroundColor!
-                          .withAlpha(87),
-                      child: ListTile(
-                        title: Text(
-                          item['bookname'],
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        trailing: IconButton(
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.redAccent,
-                            ),
-                            onPressed: () async {
-                              CustomDialog.showDeleteDilog(
-                                context,
-                                onTap: () {
+          body: BlocBuilder<ListCustomItemsCubit, ListCustomItemsState>(
+            builder: (context, state) {
+              if (state.status is ListError) {
+                return const Center(
+                  child: Text('المشکل'),
+                );
+              }
+              if (state.status is ListLoading) {
+                return Center(
+                  child: CustomLoading.fadingCircle(context),
+                );
+              }
+              if (state.status is ListComplete) {
+                final data = (state.status as ListComplete).data;
+                return data.isEmpty
+                    ? const Center(child: Text('لم يتم اضافة اي شئ بعد'))
+                    : ListView.builder(
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          final item = data[index];
+                          return ZoomTapAnimation(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ContentPage(
+                                        scrollPosetion: 1,
+                                        id: item['idbook'],
+                                        bookName: item['bookname']),
+                                  ));
+                            },
+                            child: Card(
+                              color: Theme.of(context)
+                                  .floatingActionButtonTheme
+                                  .backgroundColor!
+                                  .withAlpha(87),
+                              child: ListTile(
+                                title: Text(
+                                  item['bookname'],
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                trailing: CustomIcon.iconItem(context,
+                                    color: Colors.redAccent.shade200,
+                                    icon: Icons.delete, onTap: () {
                                   _deleteItem(
+                                    context,
                                     item['idbook'],
                                     item['bookname'],
                                   );
-                                  Navigator.pop(context);
-                                },
-                              );
-                            }),
-                      ),
-                    ),
-                  );
-                },
-              ),
+                                }),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
       ),
     );
   }
 
   Future<void> _deleteItem(
+    BuildContext contextBloc,
     int idBook,
     String bookName,
   ) async {
     await _dbHelper.insertOrdeleteBookFavorite(idBook, bookName);
     final prefs = GetStorage();
     prefs.write('iconStatus$idBook', false);
-
-    _loadItems();
+    Navigator.pop(contextBloc);
+    BlocProvider.of<ListCustomItemsCubit>(contextBloc)
+        .fetchData(_dbHelper.getDataBookFavorite());
   }
 }

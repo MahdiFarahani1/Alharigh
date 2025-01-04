@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Core/constant/api_const.dart';
 import 'package:flutter_application_1/Core/database/db_helper_BookList.dart';
+import 'package:flutter_application_1/Core/extensions/method_ex.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/booksApi/book_api_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/categoryApi/book_group_api_cubit.dart';
@@ -136,17 +137,12 @@ class _GroupsBookPageState extends State<GroupsBookPage> {
                   addAutomaticKeepAlives: true,
                   itemCount: content.length,
                   itemBuilder: (context, index) {
-                    final item = content[index];
-                    bool havePart = item['joz'] != 0;
+                    Map<String, dynamic> item = content[index];
                     final isDownloaded = item['downloaded'] == 1;
 
                     return BookDownloadItem(
                       isDownloaded: isDownloaded,
-                      title: havePart
-                          ? item['title'] +
-                              " " 'الجزء' " " +
-                              item['joz'].toString()
-                          : item['title'],
+                      title: item.getFormattedTitle(),
                       onTap: () {
                         Navigator.push(
                             context,

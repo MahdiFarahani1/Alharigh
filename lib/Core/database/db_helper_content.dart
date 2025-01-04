@@ -129,33 +129,4 @@ class DBhelperContent {
       throw Exception("Page not found.");
     }
   }
-
-  // Future<List<Map<String, dynamic>>> searchBooks(
-  //   String dbName,
-  //   String query,
-  //   bool searchInTitle,
-  //   bool searchInText,
-  // ) async {
-  //   final db = await DBhelperContent().database(dbName, '/books');
-
-  //   String queryStatement = '';
-
-  //   if (searchInTitle && searchInText) {
-  //     queryStatement = '''
-  //     SELECT * FROM bpages WHERE _text LIKE '%$query%'
-  //     UNION
-  //     SELECT * FROM bgroups WHERE title LIKE '%$query%'
-  //   ''';
-  //   } else if (searchInTitle) {
-  //     queryStatement = "SELECT * FROM bgroups WHERE title LIKE '%$query%'";
-  //   } else if (searchInText) {
-  //     queryStatement = "SELECT * FROM bpages WHERE _text LIKE '%$query%'";
-  //   } else {
-  //     return [];
-  //   }
-
-  //   return db.rawQuery(
-  //     queryStatement,
-  //   );
-  // }
 }

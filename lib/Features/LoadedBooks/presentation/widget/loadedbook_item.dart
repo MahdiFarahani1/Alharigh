@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Core/extensions/method_ex.dart';
 import 'package:flutter_application_1/Core/utils/esay_size.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
 import 'package:flutter_application_1/Features/ContentBooks/presentation/content_page.dart';
@@ -64,22 +65,15 @@ class LoadedbookItem extends StatelessWidget {
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: books.map((book) {
-                bool havePart = book['joz'] != 0;
-
                 return ZoomTapAnimation(
                   onTap: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => ContentPage(
-                            scrollPosetion: 1,
-                            id: book['id'],
-                            bookName: havePart
-                                ? book['title'] +
-                                    " " 'الجزء' " " +
-                                    book['joz'].toString()
-                                : book['title'],
-                          ),
+                              scrollPosetion: 1,
+                              id: book['id'],
+                              bookName: book.getFormattedTitle()),
                         ));
                   },
                   child: Container(
@@ -112,11 +106,7 @@ class LoadedbookItem extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            havePart
-                                ? book['title'] +
-                                    " " 'الجزء' " " +
-                                    book['joz'].toString()
-                                : book['title'],
+                            book.getFormattedTitle(),
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,

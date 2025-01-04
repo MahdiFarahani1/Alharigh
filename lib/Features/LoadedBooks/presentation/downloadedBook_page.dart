@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Core/common/common_diolog.dart';
 import 'package:flutter_application_1/Core/database/db_helper_BookList.dart';
 import 'package:flutter_application_1/Core/database/db_helper_Content.dart';
+import 'package:flutter_application_1/Core/extensions/method_ex.dart';
 import 'package:flutter_application_1/Core/utils/directory_app.dart';
 import 'package:flutter_application_1/Core/utils/esay_size.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
+import 'package:flutter_application_1/Core/widgets/icon.dart';
 import 'package:flutter_application_1/Features/ContentBooks/presentation/content_page.dart';
 import 'package:flutter_application_1/Features/DownloadPanel/presentation/download_url.dart';
-import 'package:flutter_application_1/Features/LoadedBooks/repository/delete_file.dart';
 import 'package:flutter_application_1/Features/LoadedBooks/repository/dialog%20_printer.dart';
 import 'package:open_file/open_file.dart';
-import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
 class DownloadedBookListPage extends StatefulWidget {
   const DownloadedBookListPage({super.key});
@@ -57,7 +57,6 @@ class _DownloadedBookListPageState extends State<DownloadedBookListPage> {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 final book = snapshot.data![index];
-                bool havePart = book['joz'] != 0;
 
                 return GestureDetector(
                   onTap: () {
@@ -103,11 +102,7 @@ class _DownloadedBookListPageState extends State<DownloadedBookListPage> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  havePart
-                                      ? book['title'] +
-                                          " " 'الجزء' " " +
-                                          book['joz'].toString()
-                                      : book['title'],
+                                  book.getFormattedTitle(),
                                   style: Theme.of(context).textTheme.bodyLarge,
                                   maxLines: 2,
                                   textDirection: TextDirection.rtl,
@@ -117,26 +112,23 @@ class _DownloadedBookListPageState extends State<DownloadedBookListPage> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    iconItem(context, icon: Icons.delete,
-                                        onTap: () async {
+                                    CustomIcon.iconItem(context,
+                                        icon: Icons.delete, onTap: () async {
                                       CustomDialog.showDeleteDilog(
                                         context,
                                         onTap: () async {
                                           await DBhelperBookList()
                                               .updateDownload(book['id'], 0);
-                                          deleteFile(
-                                              '/storage/emulated/0/Download/Books/${book['id']}.zip');
-                                          deleteFile(
-                                              '/storage/emulated/0/Download/Books/${book['id']}.jpg');
-                                          deleteFile(
-                                              '/storage/emulated/0/Download/Books/b${book['id']}.sqlite');
+                                          deleteFile('b${book['id']}.zip');
+                                          deleteFile('b${book['id']}.jpg');
+                                          deleteFile('b${book['id']}.sqlite');
                                           setState(() {});
                                           Navigator.of(context).pop();
                                         },
                                       );
                                     }),
-                                    iconItem(context, icon: Icons.print,
-                                        onTap: () async {
+                                    CustomIcon.iconItem(context,
+                                        icon: Icons.print, onTap: () async {
                                       DBhelperContent dBhelperContent =
                                           DBhelperContent();
                                       List pages =
@@ -155,8 +147,8 @@ class _DownloadedBookListPageState extends State<DownloadedBookListPage> {
                                           end: controllerEnd,
                                           pages: textPages);
                                     }),
-                                    iconItem(context, icon: Icons.qr_code,
-                                        onTap: () {
+                                    CustomIcon.iconItem(context,
+                                        icon: Icons.qr_code, onTap: () {
                                       showDialog(
                                         context: context,
                                         builder: (context) => AlertDialog(
@@ -175,10 +167,10 @@ class _DownloadedBookListPageState extends State<DownloadedBookListPage> {
                                         ),
                                       );
                                     }),
-                                    iconItem(context,
+                                    CustomIcon.iconItem(context,
                                         icon: Icons.picture_as_pdf,
                                         onTap: () async {
-                                      var path = await localDirectoryPdf(
+                                      var path = await localDirectory(
                                         'pdf',
                                       );
                                       checkFile(
@@ -188,7 +180,12 @@ class _DownloadedBookListPageState extends State<DownloadedBookListPage> {
                                             "${path.path}/${book['id']}.pdf",
                                           );
                                         },
-                                        notAvailable: () {
+                                        notAvailable: () async {
+                                          final booksDir =
+                                              await localDirectory('pdf');
+
+                                          final filePath =
+                                              '${booksDir.path}/${book['id']}.pdf';
                                           Navigator.push(
                                               context,
                                               DialogRoute(
@@ -198,6 +195,7 @@ class _DownloadedBookListPageState extends State<DownloadedBookListPage> {
                                                   id: book['id'],
                                                   url: book['pdf'],
                                                   downloadPath: 'pdf',
+                                                  filePath: filePath,
                                                 ),
                                               ));
                                         },
@@ -206,13 +204,29 @@ class _DownloadedBookListPageState extends State<DownloadedBookListPage> {
                                         color: book['pdf'] == ''
                                             ? Colors.grey.shade400
                                             : Colors.white),
-                                    iconItem(context,
+                                    CustomIcon.iconItem(context,
                                         icon: Icons.volume_up,
-                                        color:
-                                            book['sound_url'].toString().isEmpty
-                                                ? Colors.grey.shade400
-                                                : Colors.white, onTap: () {
-                                      print(book['sound_url']);
+                                        color: book['sound_url']
+                                                .toString()
+                                                .isEmpty
+                                            ? Colors.grey.shade400
+                                            : Colors.white, onTap: () async {
+                                      final booksDir =
+                                          await localDirectory('sound');
+
+                                      final filePath =
+                                          '${booksDir.path}/${book['id']}.mp3';
+                                      Navigator.push(
+                                          context,
+                                          DialogRoute(
+                                            context: context,
+                                            builder: (context) => DownloadUrl(
+                                              id: book['id'],
+                                              url: book['sound_url'],
+                                              downloadPath: 'sound',
+                                              filePath: filePath,
+                                            ),
+                                          ));
                                     }),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -260,34 +274,6 @@ class _DownloadedBookListPageState extends State<DownloadedBookListPage> {
           }
           return const SizedBox.shrink();
         },
-      ),
-    );
-  }
-
-  Widget iconItem(BuildContext context,
-      {required IconData icon,
-      required Function onTap,
-      Color color = Colors.white}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2),
-      child: ZoomTapAnimation(
-        onTap: () {
-          onTap();
-        },
-        child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color:
-                  Theme.of(context).floatingActionButtonTheme.backgroundColor),
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Icon(
-              icon,
-              color: color,
-              size: 24,
-            ),
-          ),
-        ),
       ),
     );
   }

@@ -12,11 +12,9 @@ extension MethodEx on String {
 }
 
 extension BookTitleExtension on Map<String, dynamic> {
-  String get formattedTitleWithJoz {
+  String getFormattedTitle() {
     bool havePart = this['joz'] != 0;
-    return havePart
-        ? '${this['title']} الجزء ${this['joz']}'
-        : '${this['title']}';
+    return havePart ? '${this['title']} الجزء ${this['joz']}' : this['title'];
   }
 }
 

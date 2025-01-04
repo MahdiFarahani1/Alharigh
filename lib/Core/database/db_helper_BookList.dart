@@ -77,25 +77,6 @@ class DBhelperBookList {
         orderBy: 'id_show ASC', where: 'downloaded = ?', whereArgs: [0]);
   }
 
-  Future<List<Map<String, dynamic>>> getRealArticle(int id) async {
-    final db = await database;
-    return db.query(
-      'articles',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  Future<List<Map<String, dynamic>>> getSearch(String query) async {
-    final db = await database;
-    return db.rawQuery("SELECT * FROM articles WHERE _text LIKE '%$query%'");
-  }
-
-  Future<List<Map<String, dynamic>>> getAllsave() async {
-    final db = await database;
-    return db.query('bookmark');
-  }
-
   Future<void> insertOrUpdateCategory({
     required String title,
     required int idShow,

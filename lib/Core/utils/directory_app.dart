@@ -6,19 +6,11 @@ import 'package:path_provider/path_provider.dart';
 Future<Directory> localDirectory(String folderName) async {
   final downloadPath = await getApplicationDocumentsDirectory();
   final booksDir = Directory('${downloadPath.path}/$folderName');
-  return booksDir;
-}
 
-Future<Directory> localDirectoryPdf(String folderName) async {
-  final downloadPath = await getApplicationDocumentsDirectory();
-  final folderDir = Directory('${downloadPath.path}/$folderName');
-
-  if (!await folderDir.exists()) {
-    print('Creating directory: ${folderDir.path}');
-    await folderDir.create(recursive: true);
+  if (!await booksDir.exists()) {
+    await booksDir.create(recursive: true);
   }
-
-  return folderDir;
+  return booksDir;
 }
 
 void checkFile(String filePath,
@@ -34,5 +26,20 @@ void checkFile(String filePath,
     print(file.path);
 
     print('فایل وجود ندارد.');
+  }
+}
+
+Future<void> deleteFile(String fileName) async {
+  final directory = await localDirectory('books');
+  final file = File('${directory.path}/$fileName');
+  if (await file.exists()) {
+    try {
+      await file.delete();
+      print("فایل با موفقیت حذف شد.");
+    } catch (e) {
+      print("خطایی در حذف فایل رخ داد: $e");
+    }
+  } else {
+    print("فایلی با این مسیر یافت نشد.");
   }
 }

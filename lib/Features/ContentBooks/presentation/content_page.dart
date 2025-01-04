@@ -8,7 +8,6 @@ import 'package:flutter_application_1/Core/database/db_helper_Content.dart';
 import 'package:flutter_application_1/Core/database/db_helper_LastUpdate.dart';
 import 'package:flutter_application_1/Core/utils/esay_size.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
-import 'package:flutter_application_1/Core/utils/remove_html_tags.dart';
 import 'package:flutter_application_1/Features/ContentBooks/presentation/bloc/audio/audio_cubit.dart';
 import 'package:flutter_application_1/Features/ContentBooks/presentation/bloc/saveBook/save_book_cubit.dart';
 import 'package:flutter_application_1/Features/ContentBooks/presentation/bloc/slider/slider_cubit.dart';
@@ -443,6 +442,7 @@ class _ContentPageState extends State<ContentPage> {
       backgroundColor:
           Theme.of(context).floatingActionButtonTheme.backgroundColor,
       title: Text(
+        textDirection: TextDirection.rtl,
         widget.bookName,
         style: const TextStyle(color: Colors.white),
       ),

@@ -6,11 +6,13 @@ class DownloadUrl extends StatefulWidget {
   final String url;
   final int id;
   final String downloadPath;
+  final String filePath;
   const DownloadUrl(
       {super.key,
       required this.url,
       required this.id,
-      required this.downloadPath});
+      required this.downloadPath,
+      required this.filePath});
 
   @override
   State<DownloadUrl> createState() => _DownloadPanelState();
@@ -24,7 +26,12 @@ class _DownloadPanelState extends State<DownloadUrl> {
       child: BlocProvider(
         create: (context) => DownloadCubit()
           ..startDownloadUrl(
-              context, widget.url, widget.downloadPath, widget.id),
+            context,
+            widget.url,
+            widget.downloadPath,
+            widget.filePath,
+            widget.id,
+          ),
         child: AlertDialog(
           content: BlocBuilder<DownloadCubit, DownloadState>(
             builder: (context, state) {

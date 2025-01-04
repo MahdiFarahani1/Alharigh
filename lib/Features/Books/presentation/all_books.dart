@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Core/constant/api_const.dart';
+import 'package:flutter_application_1/Core/extensions/method_ex.dart';
 import 'package:flutter_application_1/Core/utils/loading.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/allbookList/book_all_list_data_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/booksApi/book_api_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/search_download_page/search_downloaded_book_page_cubit.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/search_download_page/status.dart';
 import 'package:flutter_application_1/Features/Books/presentation/widget/book_download_item.dart';
-import 'package:flutter_application_1/Features/DownloadPanel/presentation/cubit/download_cubit.dart';
 import 'package:flutter_application_1/Features/DownloadPanel/presentation/download_book.dart';
 import 'package:flutter_application_1/gen/assets.gen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,100 +48,8 @@ class _AllBooksPageState extends State<AllBooksPage> {
         children: [
           Row(
             children: [
-              ZoomTapAnimation(
-                onTap: () {
-                  for (var book in state) {
-                    Navigator.push(
-                        context,
-                        DialogRoute(
-                          context: context,
-                          builder: (context) => DownloadBook(
-                            downloadPath: '${book['id']}.zip',
-                            url:
-                                ApiConstant.downloadUrl + book['id'].toString(),
-                            id: book['id'],
-                          ),
-                        ));
-                  }
-                },
-                child: Container(
-                  margin: const EdgeInsets.all(8),
-                  width: 160,
-                  height: 40,
-                  decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .floatingActionButtonTheme
-                          .backgroundColor,
-                      borderRadius: BorderRadius.circular(8)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(left: 12, top: 2, bottom: 2),
-                        child: SvgPicture.asset(
-                          Assets.images.download,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(right: 12),
-                        child: Text(
-                          'دانلود همه',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    height: 40,
-                    child: Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: TextField(
-                        controller: _textEditingController,
-                        onSubmitted: (value) {
-                          BlocProvider.of<SearchDownloadedBookPageCubit>(
-                                  context)
-                              .search(state, _textEditingController.text);
-                        },
-                        decoration: InputDecoration(
-                          prefixIcon: ZoomTapAnimation(
-                            onTap: () {
-                              BlocProvider.of<SearchDownloadedBookPageCubit>(
-                                      context)
-                                  .search(state, _textEditingController.text);
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .floatingActionButtonTheme
-                                      .backgroundColor,
-                                  borderRadius: const BorderRadius.only(
-                                      topRight: Radius.circular(8),
-                                      bottomRight: Radius.circular(8))),
-                              width: 40,
-                              height: 40,
-                              child:
-                                  const Icon(Icons.search, color: Colors.white),
-                            ),
-                          ),
-                          isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 12),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              downloadAllBtn(state, context),
+              textFeildSearch(context, state),
             ],
           ),
           BlocBuilder<SearchDownloadedBookPageCubit,
@@ -164,15 +72,9 @@ class _AllBooksPageState extends State<AllBooksPage> {
                     itemBuilder: (context, index) {
                       final item = state[index];
 
-                      bool havePart = item['joz'] != 0;
-
                       return BookDownloadItem(
                         isDownloaded: false,
-                        title: havePart
-                            ? item['title'] +
-                                " " 'الجزء' " " +
-                                item['joz'].toString()
-                            : item['title'],
+                        title: item.getFormattedTitle(),
                         onTap: () async {
                           Navigator.push(
                               context,
@@ -198,17 +100,11 @@ class _AllBooksPageState extends State<AllBooksPage> {
                   child: ListView.builder(
                     itemCount: searchData.length,
                     itemBuilder: (context, index) {
-                      final item = searchData[index];
-
-                      bool havePart = item['joz'] != 0;
+                      Map<String, dynamic> item = searchData[index];
 
                       return BookDownloadItem(
                         isDownloaded: false,
-                        title: havePart
-                            ? item['title'] +
-                                " " 'الجزء' " " +
-                                item['joz'].toString()
-                            : item['title'],
+                        title: item.getFormattedTitle(),
                         onTap: () async {
                           Navigator.push(
                               context,
@@ -233,5 +129,104 @@ class _AllBooksPageState extends State<AllBooksPage> {
         ],
       );
     });
+  }
+
+  Widget textFeildSearch(
+      BuildContext context, List<Map<String, dynamic>> state) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SizedBox(
+          height: 40,
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: TextField(
+              controller: _textEditingController,
+              onSubmitted: (value) {
+                BlocProvider.of<SearchDownloadedBookPageCubit>(context)
+                    .search(state, _textEditingController.text);
+              },
+              decoration: InputDecoration(
+                prefixIcon: ZoomTapAnimation(
+                  onTap: () {
+                    BlocProvider.of<SearchDownloadedBookPageCubit>(context)
+                        .search(state, _textEditingController.text);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Theme.of(context)
+                            .floatingActionButtonTheme
+                            .backgroundColor,
+                        borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(8),
+                            bottomRight: Radius.circular(8))),
+                    width: 40,
+                    height: 40,
+                    child: const Icon(Icons.search, color: Colors.white),
+                  ),
+                ),
+                isDense: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget downloadAllBtn(
+      List<Map<String, dynamic>> state, BuildContext context) {
+    return ZoomTapAnimation(
+      onTap: () {
+        for (var book in state) {
+          Navigator.push(
+              context,
+              DialogRoute(
+                context: context,
+                builder: (context) => DownloadBook(
+                  downloadPath: '${book['id']}.zip',
+                  url: ApiConstant.downloadUrl + book['id'].toString(),
+                  id: book['id'],
+                ),
+              )).then(
+            (value) {
+              Navigator.pop(context);
+            },
+          );
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.all(8),
+        width: 160,
+        height: 40,
+        decoration: BoxDecoration(
+            color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
+            borderRadius: BorderRadius.circular(8)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 12, top: 2, bottom: 2),
+              child: SvgPicture.asset(
+                Assets.images.download,
+                color: Colors.white,
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(right: 12),
+              child: Text(
+                'تحميل الكل',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
