@@ -14,7 +14,8 @@ class AudioCubit extends Cubit<AudioState> {
           await _dbHelper.getDownloadedItems();
 
       final hasSound = downloadedBooks.any((book) =>
-          book['id'] == bookId && book['sound']?.toString().isNotEmpty == true);
+          book['id'] == bookId &&
+          book['sound_url']?.toString().isNotEmpty == true);
 
       emit(AudioState(haveSound: hasSound));
     } catch (e) {

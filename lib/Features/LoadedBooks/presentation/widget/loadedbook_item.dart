@@ -71,6 +71,7 @@ class LoadedbookItem extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ContentPage(
+                              soundUrl: book['sound_url'],
                               scrollPosetion: 1,
                               id: book['id'],
                               bookName: book.getFormattedTitle()),

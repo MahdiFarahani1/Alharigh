@@ -65,7 +65,11 @@ class SettingsPage extends StatelessWidget {
                           max: 30,
                           divisions: 20,
                           label: state.fontSize.toString(),
-                          onChanged: cubit.changeFontSize,
+                          onChanged: (size) {
+                            // cubit.changeFontSize(
+                            //   size,
+                            // );
+                          },
                         ),
                       ),
                     ),
@@ -266,13 +270,13 @@ class SettingsPage extends StatelessWidget {
       BuildContext context, Color color, SettingsState state) {
     final cubit = context.read<SettingsCubit>();
     return GestureDetector(
-      onTap: () => cubit.changeBackgroundColor(color),
+      onTap: () => cubit.changePageColor(color),
       child: Container(
         width: 50,
         height: 50,
         decoration: BoxDecoration(
             color: color, border: Border.all(color: Colors.black)),
-        child: state.selectedBackgroundColor == color
+        child: state.selectedPageColor == color
             ? Icon(Icons.check,
                 color:
                     Theme.of(context).floatingActionButtonTheme.backgroundColor)

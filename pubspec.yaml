@@ -65,6 +65,8 @@ dependencies:
   url_launcher: ^6.3.1
   open_file: ^3.5.10
   printing: ^5.13.1
+  color_hex: ^0.0.1
+  just_audio: ^0.9.42
 dev_dependencies:
   flutter_test:
     sdk: flutter

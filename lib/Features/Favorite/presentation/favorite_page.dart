@@ -12,22 +12,13 @@ import 'package:flutter_application_1/Features/Favorite/presentation/bloc/List_C
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
-class FavoritePage extends StatefulWidget {
+class FavoritePage extends StatelessWidget {
   const FavoritePage({super.key});
-
-  @override
-  State<FavoritePage> createState() => _FavoritePageState();
-}
-
-class _FavoritePageState extends State<FavoritePage> {
-  final DBhelperLastUpdate _dbHelper = DBhelperLastUpdate();
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ListCustomItemsCubit()
-        ..fetchDoubleData(
-            _dbHelper.getComments(), _dbHelper.getDataPageFavorite()),
+      create: (context) => ListCustomItemsCubit()..fetchDoubleData(),
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: DefaultTabController(
@@ -100,7 +91,7 @@ class _FavoritePageState extends State<FavoritePage> {
                                             DBhelperContent().updateFav(
                                                 'b${item['idbook']}.sqlite',
                                                 item['idpage']);
-                                            _dbHelper
+                                            DBhelperLastUpdate()
                                                 .insertOrdeletePageFavorite(
                                                     item['idpage'],
                                                     item['idbook'],
@@ -111,10 +102,7 @@ class _FavoritePageState extends State<FavoritePage> {
                                             BlocProvider.of<
                                                         ListCustomItemsCubit>(
                                                     context)
-                                                .fetchDoubleData(
-                                                    _dbHelper.getComments(),
-                                                    _dbHelper
-                                                        .getDataPageFavorite());
+                                                .fetchDoubleData();
                                           },
                                         );
                                       }),
@@ -216,11 +204,7 @@ class _FavoritePageState extends State<FavoritePage> {
                                                       BlocProvider.of<
                                                                   ListCustomItemsCubit>(
                                                               context)
-                                                          .fetchDoubleData(
-                                                              _dbHelper
-                                                                  .getComments(),
-                                                              _dbHelper
-                                                                  .getDataPageFavorite());
+                                                          .fetchDoubleData();
                                                     },
                                                   );
                                                 }),

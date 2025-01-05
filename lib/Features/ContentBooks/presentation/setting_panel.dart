@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Core/utils/esay_size.dart';
 import 'package:flutter_application_1/Features/Settings/presentation/bloc/setting_cubit.dart';
+import 'package:flutter_application_1/Features/Settings/presentation/bloc/settings_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-class SettingsDialog extends StatefulWidget {
-  const SettingsDialog({super.key});
-
-  @override
-  State<SettingsDialog> createState() => _SettingsDialogState();
-}
-
-class _SettingsDialogState extends State<SettingsDialog> {
-  double _fontSize = 35;
-  String _fontFamily = 'طاهر';
-  Color _backgroundColor = Colors.white;
-
-  final List<String> _fontFamilies = ['طاهر', 'البهج', 'دجله'];
+class SettingsDialog extends StatelessWidget {
+  final InAppWebViewController controller;
+  const SettingsDialog({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
+    String _fontFamily = 'طاهر';
+
+    final List<String> _fontFamilies = ['طاهر', 'البهج', 'دجله'];
     return Directionality(
       textDirection: TextDirection.rtl,
       child: AlertDialog(
@@ -53,16 +48,19 @@ class _SettingsDialogState extends State<SettingsDialog> {
                               color: Colors.white,
                             ),
                           ),
-                          child: Slider(
-                            value: _fontSize,
-                            min: 10,
-                            max: 50,
-                            divisions: 40,
-                            label: _fontSize.round().toString(),
-                            onChanged: (value) {
-                              setState(() {
-                                _fontSize = value;
-                              });
+                          child: BlocBuilder<SettingsCubit, SettingsState>(
+                            builder: (context, state) {
+                              return Slider(
+                                value: state.fontSize,
+                                min: 10,
+                                max: 30,
+                                divisions: 20,
+                                label: state.fontSize.round().toString(),
+                                onChanged: (size) {
+                                  BlocProvider.of<SettingsCubit>(context)
+                                      .changeFontSize(size, controller);
+                                },
+                              );
                             },
                           ),
                         ),
@@ -95,9 +93,9 @@ class _SettingsDialogState extends State<SettingsDialog> {
                       );
                     }).toList(),
                     onChanged: (value) {
-                      setState(() {
-                        _fontFamily = value!;
-                      });
+                      // setState(() {
+                      //   _fontFamily = value!;
+                      // });
                     },
                   ),
                 ),
@@ -108,49 +106,54 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 style: TextStyle(fontSize: 18),
               ),
               EsaySize.gap(10),
-              Card(
-                color: Colors.black12,
-                elevation: 6,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: BlocProvider.of<SettingsCubit>(context)
-                        .state
-                        .backgroundPageColor
-                        .map((color) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _backgroundColor = color;
-                          });
-                        },
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              _backgroundColor == color
-                                  ? BoxShadow(
-                                      offset: const Offset(2, 2),
-                                      blurRadius: 5,
-                                      color: Theme.of(context)
-                                          .floatingActionButtonTheme
-                                          .backgroundColor!)
-                                  : const BoxShadow(),
-                            ],
-                            color: color,
-                            border: Border.all(
-                              color: Colors.black,
-                              width: _backgroundColor == color ? 1 : 0.5,
+              BlocBuilder<SettingsCubit, SettingsState>(
+                builder: (context, state) {
+                  return Card(
+                    color: Colors.black12,
+                    elevation: 6,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: BlocProvider.of<SettingsCubit>(context)
+                            .state
+                            .backgroundPageColor
+                            .map((color) {
+                          return GestureDetector(
+                            onTap: () {
+                              BlocProvider.of<SettingsCubit>(context)
+                                  .changePageColor(color);
+                            },
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  state.selectedPageColor == color
+                                      ? BoxShadow(
+                                          offset: const Offset(2, 2),
+                                          blurRadius: 5,
+                                          color: Theme.of(context)
+                                              .floatingActionButtonTheme
+                                              .backgroundColor!)
+                                      : const BoxShadow(),
+                                ],
+                                color: color,
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: state.selectedPageColor == color
+                                      ? 1
+                                      : 0.5,
+                                ),
+                                shape: BoxShape.circle,
+                              ),
                             ),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -160,9 +163,12 @@ class _SettingsDialogState extends State<SettingsDialog> {
   }
 }
 
-void showFontSettingsDialog(BuildContext context) {
+void showFontSettingsDialog(
+    BuildContext context, InAppWebViewController controller) {
   showDialog(
     context: context,
-    builder: (context) => const SettingsDialog(),
+    builder: (context) => SettingsDialog(
+      controller: controller,
+    ),
   );
 }

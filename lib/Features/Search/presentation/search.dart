@@ -201,6 +201,8 @@ class SearchPageState extends State<SearchPage> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => ContentPage(
+                                                soundUrl: data[index]
+                                                    ['sound_url'],
                                                 id: data[index]['id'],
                                                 bookName: data[index]['title'],
                                                 scrollPosetion: 1),
@@ -210,6 +212,8 @@ class SearchPageState extends State<SearchPage> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => ContentPage(
+                                                soundUrl: data[index]
+                                                    ['sound_url'],
                                                 id: idbook,
                                                 bookName: bookname,
                                                 scrollPosetion: double.parse(

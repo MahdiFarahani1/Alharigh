@@ -1,4 +1,4 @@
-// import 'package:flutter/material.dart';
+import 'package:flutter_application_1/gen/fonts.gen.dart';
 
 extension MethodEx on String {
   String fixTitle() {
@@ -26,6 +26,19 @@ extension CutString on String {
       return updateString;
     } else {
       return this;
+    }
+  }
+
+  String getFontFamily() {
+    switch (this) {
+      case 'نسخ':
+        return FontFamily.arabic;
+      case 'نازنین':
+        return FontFamily.salamat;
+      case 'بهیج':
+        return FontFamily.trajan;
+      default:
+        return '';
     }
   }
 }

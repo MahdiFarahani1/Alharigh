@@ -53,6 +53,7 @@ class _DownloadedBookListPageState extends State<DownloadedBookListPage> {
             print(snapshot.data!.length);
 
             return ListView.builder(
+              addAutomaticKeepAlives: true,
               padding: const EdgeInsets.all(16),
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
@@ -66,6 +67,7 @@ class _DownloadedBookListPageState extends State<DownloadedBookListPage> {
                           builder: (context) => ContentPage(
                               scrollPosetion: 1,
                               id: book['id'],
+                              soundUrl: book['sound_url'],
                               bookName: book['title']),
                         ));
                   },
