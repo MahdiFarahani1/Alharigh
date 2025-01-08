@@ -19,18 +19,18 @@ html {
 }
 
 @font-face {
-  font-family: "lotus-light";
-  src: url("./lotus-light.ttf") format("truetype");
+  font-family: "AGC";
+  src: url("./AGCRegular.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "bahij_muna-bold";
-  src: url("bahij_muna-bold.ttf") format("truetype");
+  font-family: "Jazeera";
+  src: url("./Al-Jazeera-Arabic-Regular.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "dijalhregular";
-  src: url("dijalhregular.ttf") format("truetype");
+  font-family: "Bloom";
+  src: url('assets/fonts/AGCRegular.ttf') format("truetype");
 }
 
 .pageLoading {

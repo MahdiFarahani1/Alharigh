@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DBhelperBookList {
@@ -21,7 +22,13 @@ class DBhelperBookList {
   }
 
   Future<Database> _initDb() async {
-    final dbPath = await getDatabasesPath();
+    String dbPath = '';
+    if (Platform.isAndroid || Platform.isIOS) {
+      dbPath = await getDatabasesPath();
+    } else {
+      final directory = await getApplicationDocumentsDirectory();
+      dbPath = directory.path;
+    }
     final path = join(dbPath, "booklist.sqlite");
 
     final exist = await databaseExists(path);
@@ -31,7 +38,7 @@ class DBhelperBookList {
         await Directory(dirname(path)).create(recursive: true);
       } catch (_) {}
       ByteData data =
-          await rootBundle.load(join("assets/database", "booklist.sqlite"));
+          await rootBundle.load(join("assets/database/", "booklist.sqlite"));
       List<int> bytes =
           data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       await File(path).writeAsBytes(bytes, flush: true);

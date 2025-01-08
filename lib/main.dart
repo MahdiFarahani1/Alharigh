@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
           create: (context) => BookgroupCubit(),
         ),
         BlocProvider(
-          create: (context) => SettingsCubit(),
+          create: (context) => SettingsCubit()..initSetting(),
         ),
         BlocProvider(
           create: (context) => BookGroupApiCubit(),
@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
         builder: (context, state) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            theme: ThemeApp.lightTheme(state.selectedBackgroundColor),
+            theme: ThemeApp.lightTheme(Color(state.selectedBackgroundColor)),
             home: const Splash(),
           );
         },

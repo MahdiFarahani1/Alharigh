@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class SettingsDialog extends StatelessWidget {
-  final InAppWebViewController controller;
+  final InAppWebViewController? controller;
   const SettingsDialog({super.key, required this.controller});
 
   @override
@@ -57,8 +57,11 @@ class SettingsDialog extends StatelessWidget {
                                 divisions: 20,
                                 label: state.fontSize.round().toString(),
                                 onChanged: (size) {
+                                  print('______${size}___________');
                                   BlocProvider.of<SettingsCubit>(context)
-                                      .changeFontSize(size, controller);
+                                      .changeFontSize(
+                                    size,
+                                  );
                                 },
                               );
                             },

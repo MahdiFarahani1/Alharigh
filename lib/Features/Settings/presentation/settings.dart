@@ -66,9 +66,9 @@ class SettingsPage extends StatelessWidget {
                           divisions: 20,
                           label: state.fontSize.toString(),
                           onChanged: (size) {
-                            // cubit.changeFontSize(
-                            //   size,
-                            // );
+                            cubit.changeFontSize(
+                              size,
+                            );
                           },
                         ),
                       ),
@@ -87,9 +87,9 @@ class SettingsPage extends StatelessWidget {
                         data: themeSlider(),
                         child: Slider(
                           value: state.lineSpacing,
-                          min: 1,
-                          max: 3,
-                          divisions: 20,
+                          min: 30,
+                          max: 60,
+                          divisions: 30,
                           label: state.lineSpacing.toStringAsFixed(1),
                           onChanged: cubit.changeLineSpacing,
                         ),
@@ -196,7 +196,7 @@ class SettingsPage extends StatelessWidget {
                       itemBuilder: (BuildContext context, int itemIndex,
                               int pageViewIndex) =>
                           Card(
-                        color: state.selectedBackgroundColor,
+                        color: Color(state.selectedBackgroundColor),
                         child: SizedBox(
                           width: EsaySize.width(context),
                           child: Center(
@@ -205,7 +205,7 @@ class SettingsPage extends StatelessWidget {
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 17,
-                                color: state.selectedBackgroundColor ==
+                                color: Color(state.selectedBackgroundColor) ==
                                         const Color(0xFF242323)
                                     ? Colors.white
                                     : Colors.black),
@@ -256,7 +256,7 @@ class SettingsPage extends StatelessWidget {
           color: color,
           shape: BoxShape.rectangle,
           border: Border.all(
-            color: state.selectedBackgroundColor == color
+            color: state.selectedBackgroundColor == color.value
                 ? Colors.black
                 : Colors.transparent,
             width: 2,
@@ -276,7 +276,7 @@ class SettingsPage extends StatelessWidget {
         height: 50,
         decoration: BoxDecoration(
             color: color, border: Border.all(color: Colors.black)),
-        child: state.selectedPageColor == color
+        child: state.selectedPageColor == color.value
             ? Icon(Icons.check,
                 color:
                     Theme.of(context).floatingActionButtonTheme.backgroundColor)

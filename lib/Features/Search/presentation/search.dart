@@ -26,6 +26,13 @@ class SearchPageState extends State<SearchPage> {
   String bookname = '';
 
   final TextEditingController _textEditingController = TextEditingController();
+  @override
+  void initState() {
+    BlocProvider.of<SearchBooksCubit>(context).searchData('b${idbook}.sqlite',
+        widget.searchQuery, titleBool, contentBool, idbook);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

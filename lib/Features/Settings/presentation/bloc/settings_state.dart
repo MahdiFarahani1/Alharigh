@@ -5,12 +5,12 @@ class SettingsState {
   final double fontSize;
   final double lineSpacing;
   final String selectedFont;
-  final Color selectedBackgroundColor;
+  final int selectedBackgroundColor;
   final String pageOrientation;
   final Axis axix;
   final bool isLightMode;
   final List<Color> backgroundPageColor;
-  final Color selectedPageColor;
+  final int selectedPageColor;
 
   SettingsState(
       {this.backgroundPageColor = const [
@@ -18,12 +18,12 @@ class SettingsState {
         Color.fromRGBO(255, 236, 179, 1),
         Color(0xFFFFFFFF),
       ],
-      this.selectedPageColor = const Color.fromARGB(255, 255, 255, 255),
+      this.selectedPageColor = 0xFFFFFFFF,
       this.selectedTheme = 'روشن',
       this.fontSize = 14,
-      this.lineSpacing = 1.5,
+      this.lineSpacing = 30,
       this.selectedFont = 'بهیج',
-      this.selectedBackgroundColor = const Color.fromRGBO(141, 110, 99, 1),
+      this.selectedBackgroundColor = 0xFF8D6E63,
       this.pageOrientation = 'عمودی',
       this.axix = Axis.vertical,
       this.isLightMode = true});
@@ -33,11 +33,11 @@ class SettingsState {
       double? fontSize,
       double? lineSpacing,
       String? selectedFont,
-      Color? selectedBackgroundColor,
+      int? selectedBackgroundColor,
       String? pageOrientation,
       Axis? axix,
       bool? isLightMode,
-      Color? selectedPageColor}) {
+      int? selectedPageColor}) {
     return SettingsState(
         selectedTheme: selectedTheme ?? this.selectedTheme,
         fontSize: fontSize ?? this.fontSize,

@@ -10,9 +10,9 @@ class CustomSnackBar {
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(4),
         elevation: 6,
-        backgroundColor: BlocProvider.of<SettingsCubit>(context)
-            .state
-            .selectedBackgroundColor
+        backgroundColor: Color(BlocProvider.of<SettingsCubit>(context)
+                .state
+                .selectedBackgroundColor)
             .withOpacity(0.74),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
