@@ -135,14 +135,6 @@ class DownloadCubit extends Cubit<DownloadState> {
         child: AlertDialog(
           title: const Text('خطأ'),
           content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("نعم"),
-            ),
-          ],
         ),
       ),
     );

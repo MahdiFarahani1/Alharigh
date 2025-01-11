@@ -246,7 +246,7 @@ class SettingsPage extends StatelessWidget {
           cubit.changeBackgroundColor(color);
         } else {
           CustomSnackBar.show(context,
-              message: 'لطفا برای تغییر رنگ اول حالت اپ را به روز تغییر دهید');
+              message: 'لتغيير اللون، قم بتغيير وضع التطبيق إلى النهار أولاً.');
         }
       },
       child: Container(

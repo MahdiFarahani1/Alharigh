@@ -183,22 +183,7 @@ class _AllBooksPageState extends State<AllBooksPage> {
       List<Map<String, dynamic>> state, BuildContext context) {
     return ZoomTapAnimation(
       onTap: () {
-        for (var book in state) {
-          Navigator.push(
-              context,
-              DialogRoute(
-                context: context,
-                builder: (context) => DownloadBook(
-                  downloadPath: '${book['id']}.zip',
-                  url: ApiConstant.downloadUrl + book['id'].toString(),
-                  id: book['id'],
-                ),
-              )).then(
-            (value) {
-              Navigator.pop(context);
-            },
-          );
-        }
+        downloadBooksSequentially(state, context);
       },
       child: Container(
         margin: const EdgeInsets.all(8),
@@ -228,5 +213,28 @@ class _AllBooksPageState extends State<AllBooksPage> {
         ),
       ),
     );
+  }
+
+  Future<void> downloadBooksSequentially(
+      List<Map<String, dynamic>> state, BuildContext context) async {
+    for (var book in state) {
+      await Navigator.push(
+        context,
+        DialogRoute(
+          context: context,
+          builder: (context) => DownloadBook(
+            downloadPath: '${book['id']}.zip',
+            url: ApiConstant.downloadUrl + book['id'].toString(),
+            id: book['id'],
+          ),
+        ),
+      );
+
+      print("Download for book ${book['id']} finished.");
+    }
+
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
   }
 }

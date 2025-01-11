@@ -99,7 +99,8 @@ class AppbarHome extends StatelessWidget {
             ),
           ));
     } else {
-      CustomSnackBar.show(context, message: 'فیلد جستجو نمی تواند خالی باشد!');
+      CustomSnackBar.show(context,
+          message: 'لا يمكن أن يكون حقل البحث فارغًا.');
     }
   }
 }

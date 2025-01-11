@@ -148,7 +148,7 @@ class SearchPageState extends State<SearchPage> {
                           builder: (context, index) {
                             if (index == 0) {
                               return Text(
-                                'الکل',
+                                'الكل',
                                 style: TextStyle(
                                     color: selectedIndex == index
                                         ? Colors.black
