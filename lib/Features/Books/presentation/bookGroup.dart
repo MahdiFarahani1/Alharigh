@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Core/common/common_snackBar.dart';
 import 'package:flutter_application_1/Core/constant/api_const.dart';
 import 'package:flutter_application_1/Core/database/db_helper_BookList.dart';
 import 'package:flutter_application_1/Core/extensions/method_ex.dart';
@@ -144,21 +145,26 @@ class _GroupsBookPageState extends State<GroupsBookPage> {
                       isDownloaded: isDownloaded,
                       title: item.getFormattedTitle(),
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            DialogRoute(
-                              context: context,
-                              builder: (context) => DownloadBook(
-                                downloadPath: '${item['id']}.zip',
-                                url: ApiConstant.downloadUrl +
-                                    item['id'].toString(),
-                                id: item['id'],
-                              ),
-                            )).then(
-                          (value) {
-                            setState(() {});
-                          },
-                        );
+                        if (isDownloaded) {
+                          CustomSnackBar.show(context,
+                              message: 'لقد تم تحميل هذا الكتاب بالفعل');
+                        } else {
+                          Navigator.push(
+                              context,
+                              DialogRoute(
+                                context: context,
+                                builder: (context) => DownloadBook(
+                                  downloadPath: '${item['id']}.zip',
+                                  url: ApiConstant.downloadUrl +
+                                      item['id'].toString(),
+                                  id: item['id'],
+                                ),
+                              )).then(
+                            (value) {
+                              setState(() {});
+                            },
+                          );
+                        }
                       },
                     );
                   },

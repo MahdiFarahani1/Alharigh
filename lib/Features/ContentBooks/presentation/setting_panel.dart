@@ -11,9 +11,10 @@ class SettingsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String _fontFamily = 'طاهر';
+    String _fontFamily =
+        BlocProvider.of<SettingsCubit>(context).state.selectedFont;
 
-    final List<String> _fontFamilies = ['طاهر', 'البهج', 'دجله'];
+    final List<String> _fontFamilies = ['بهیج', 'نازنین', 'نسخ'];
     return Directionality(
       textDirection: TextDirection.rtl,
       child: AlertDialog(
@@ -96,9 +97,8 @@ class SettingsDialog extends StatelessWidget {
                       );
                     }).toList(),
                     onChanged: (value) {
-                      // setState(() {
-                      //   _fontFamily = value!;
-                      // });
+                      BlocProvider.of<SettingsCubit>(context)
+                          .changeFont(value!);
                     },
                   ),
                 ),

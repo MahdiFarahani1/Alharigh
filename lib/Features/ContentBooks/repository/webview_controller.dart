@@ -1,20 +1,20 @@
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+// import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-class WebViewControllerManager {
-  static final WebViewControllerManager _instance =
-      WebViewControllerManager._internal();
+// class WebViewControllerManager {
+//   static final WebViewControllerManager _instance =
+//       WebViewControllerManager._internal();
 
-  factory WebViewControllerManager() => _instance;
+//   factory WebViewControllerManager() => _instance;
 
-  WebViewControllerManager._internal();
+//   WebViewControllerManager._internal();
 
-  InAppWebViewController? webViewController;
+//   InAppWebViewController? webViewController;
 
-  void setController(InAppWebViewController controller) {
-    webViewController = controller;
-  }
+//   void setController(InAppWebViewController controller) {
+//     webViewController = controller;
+//   }
 
-  InAppWebViewController? getController() {
-    return webViewController;
-  }
-}
+//   InAppWebViewController? getController() {
+//     return webViewController;
+//   }
+// }

@@ -3,7 +3,11 @@
 }
 
 
-
+body {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  position: relative;
+}
 @font-face {
   font-family: "AGC";
   src: url("/assets/fonts/Al-Jazeera-Arabic-Regular.ttf") format("truetype");
@@ -21,11 +25,7 @@
 .show_setting {
   display: flex !important;
 }
-body {
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  position: relative;
-}
+
 .bg-active {
   border: 1px solid #005a63 !important;
 }

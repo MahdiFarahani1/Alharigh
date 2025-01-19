@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:another_xlider/another_xlider.dart';
 import 'package:another_xlider/enums/tooltip_direction_enum.dart';
 import 'package:another_xlider/models/handler.dart';
@@ -5,6 +7,10 @@ import 'package:another_xlider/models/tooltip/tooltip.dart';
 import 'package:another_xlider/models/trackbar.dart';
 import 'package:color_hex/color_hex.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_application_1/Core/DiWebView/jquery-3.6.4.min.js.dart';
+import 'package:flutter_application_1/Core/DiWebView/main.js.dart';
+import 'package:flutter_application_1/Core/DiWebView/style.dart';
 import 'package:flutter_application_1/Core/database/db_helper_Content.dart';
 import 'package:flutter_application_1/Core/database/db_helper_LastUpdate.dart';
 import 'package:flutter_application_1/Core/utils/esay_size.dart';
@@ -16,9 +22,7 @@ import 'package:flutter_application_1/Features/ContentBooks/presentation/bloc/sl
 import 'package:flutter_application_1/Features/ContentBooks/presentation/content_group.dart';
 import 'package:flutter_application_1/Features/ContentBooks/presentation/setting_panel.dart';
 import 'package:flutter_application_1/Features/ContentBooks/repository/modal_comment.dart';
-import 'package:flutter_application_1/Features/ContentBooks/repository/webview_controller.dart';
 import 'package:flutter_application_1/Features/Settings/presentation/bloc/setting_cubit.dart';
-import 'package:flutter_application_1/gen/assets.gen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
@@ -42,6 +46,52 @@ class ContentPage extends StatefulWidget {
 
 class _ContentPageState extends State<ContentPage> {
   String urlSound = '';
+  String fontCss = '';
+
+  late InAppWebViewController inAppWebViewController;
+  @override
+  void initState() {
+    _loadFont();
+    super.initState();
+  }
+
+  String getFontUriAsBase64(ByteData data, String mime) {
+    final buffer = data.buffer;
+    return "data:$mime;charset=utf-8;base64,${base64Encode(buffer.asUint8List(data.offsetInBytes, data.lengthInBytes))}";
+  }
+
+  Future<void> _loadFont() async {
+    // testjs = await rootBundle.loadString('assets/web/css/mhebooks.css');
+    String fontfamily = 'assets/fonts/Al-Jazeera-Arabic-Regular.woff2';
+    switch (BlocProvider.of<SettingsCubit>(context).state.selectedFont) {
+      case 'نسخ':
+        fontfamily = 'assets/fonts/Al-Jazeera-Arabic-Regular.woff2';
+        break;
+      case 'نازنین':
+        fontfamily = 'assets/fonts/Noor-Regular.woff2';
+
+        break;
+      case 'بهیج':
+        fontfamily = 'assets/fonts/BloombergArabicBetav4-Regular.woff2';
+
+        break;
+      default:
+    }
+    final fontData = await rootBundle.load(fontfamily);
+    final fontUri = getFontUriAsBase64(fontData, 'font/opentype');
+    setState(() {
+      fontCss = '''
+      @font-face {
+        font-family: "customFont";
+        src: url("$fontUri") format('woff2');
+      }
+      body, p, span, div {
+        font-family: "customFont" !important;
+        direction: rtl;
+      }
+    ''';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +125,7 @@ class _ContentPageState extends State<ContentPage> {
                 child: Text('${snapshot.error}'),
               );
             }
+
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
               var cubit = BlocProvider.of<SettingsCubit>(context);
               bool verticalScroll =
@@ -116,31 +167,24 @@ class _ContentPageState extends State<ContentPage> {
                         <head>
                           <meta charset="UTF-8">
                           <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        
                           <style>
-                          
-                            body {
-                              
-                              font-family: Arial, sans-serif;
-                              line-height: 1.6;
-                              padding: 6px;
-                            }
-                            h1, h2, h3 {
-                              color: #333;
-                            }
-                            hr {
-                              margin: 20px 0;
-                            }
-                            p div {
-                              display: block !important;
-                            }
+                          $fontCss
+                          ${cssStyle()}
                           </style>
                         </head>
                         <body onload="replaceContent()" dir="rtl">
                     <div class='$bookContainer'>
-                          
                           $allText
                       </div>
+                      <script>
+                        ${jQuery()}
+                   
+                        ${mianJs()}
+                       </script>
+                        
                         </body>
+
                         </html>
                         """;
 
@@ -163,8 +207,9 @@ class _ContentPageState extends State<ContentPage> {
                           ? EsaySize.height(context)
                           : EsaySize.height(context) - 110,
                       child: InAppWebView(
-                        onWebViewCreated: (controller) {
-                          WebViewControllerManager().setController(controller);
+                        onWebViewCreated: (controller) async {
+                          print('salam');
+                          inAppWebViewController = controller;
 
                           controller.addJavaScriptHandler(
                             handlerName: 'bookmarkToggled',
@@ -178,7 +223,6 @@ class _ContentPageState extends State<ContentPage> {
                                       widget.id, widget.bookName, '');
                             },
                           );
-
                           controller.addJavaScriptHandler(
                             handlerName: 'CommentEvent',
                             callback: (args) async {
@@ -194,6 +238,7 @@ class _ContentPageState extends State<ContentPage> {
                           );
                         },
                         onLoadStop: (controller, url) {
+                          ;
                           if (verticalScroll) {
                             // Vertical SPY
                             controller.evaluateJavascript(source: r"""
@@ -253,6 +298,7 @@ class _ContentPageState extends State<ContentPage> {
                           );
                         },
                         initialSettings: InAppWebViewSettings(
+                          supportMultipleWindows: true,
                           javaScriptEnabled: true,
                           domStorageEnabled: true,
                           allowFileAccessFromFileURLs: true,
@@ -268,78 +314,12 @@ class _ContentPageState extends State<ContentPage> {
                           useOnLoadResource: true,
                         ),
                         onLoadStart: (controller, url) async {
-                          print(
-                              'onload)))))))))))______________skosdfsdfasdfas');
-                          await controller.injectCSSFileFromAsset(
-                              assetFilePath: Assets.web.css.bootstrapRtlMin);
-                          await controller.injectCSSFileFromAsset(
-                              assetFilePath: Assets.web.css.mhebooks);
-
-                          await controller.injectJavascriptFileFromAsset(
-                              assetFilePath: Assets.web.js.jquery351Min);
-                          await controller.injectJavascriptFileFromAsset(
-                              assetFilePath: Assets.web.js.bootstrapBundleMin);
-                          await controller.injectJavascriptFileFromAsset(
-                              assetFilePath: Assets.web.js.main);
                           await controller.evaluateJavascript(source: '''
-                      if (${widget.scrollPosetion} != 0) {
-                        var y = getOffset(document.getElementById('book-mark_${widget.scrollPosetion == 0 ? widget.scrollPosetion : widget.scrollPosetion.floor() - 1}')).top;
-                        window.scrollTo(0, y);
-                      }
-                    ''');
-
-                          await controller.evaluateJavascript(source: r'''
-                                $(function () {
-                    console.log("Tooltip initialized");
-                    $('[data-toggle="tooltip"]').tooltip({
-                      placement: 'bottom',
-                      html: true
-                    });
-                                });
-                      
-                      
-                      
-                      function BookmarkStatus() {
-                              var bookmark_elems = $('.book-mark');
-                              bookmark_elems.each(function(index){
-                                $(this).click(function() { 
-                    var item = $(this);  
-                    if (item.hasClass("add_fav")) {
-                      item.removeClass("add_fav");
-                    } else {
-                      item.addClass("add_fav");
-                    }
-                    // Send the updated bookmark status back to Flutter
-                    if (window.flutter_inappwebview) {
-                      window.flutter_inappwebview.callHandler('bookmarkToggled', index);
-                    }
-                                });
-                              });
-                      }
-                      BookmarkStatus();
-                    
-                    
-                    
-                    
-                          function CommentEvent() {
-                              var bookmark_elems = $('.comment-button');
-                              bookmark_elems.each(function(index){
-                                $(this).click(function() { 
-                    var item = $(this);
-                    if (!item.hasClass("has-comment")) {
-                      item.addClass("has-comment");
-                    }
-                    if (window.flutter_inappwebview) {
-                      window.flutter_inappwebview.callHandler('CommentEvent', index);
-                    }
-                                });
-                              });
-                      }
-                      CommentEvent();
-                      
-                      
-                      
-                              ''');
+                          if (${widget.scrollPosetion} != 0) {
+                            var y = getOffset(document.getElementById('book-mark_${widget.scrollPosetion == 0 ? widget.scrollPosetion : widget.scrollPosetion.floor() - 1}')).top;
+                            window.scrollTo(0, y);
+                          };
+                          ''');
                         },
                         initialData: InAppWebViewInitialData(
                           data: htmlContent,
@@ -412,13 +392,12 @@ class _ContentPageState extends State<ContentPage> {
                             // },
                             onDragCompleted:
                                 (handlerIndex, lowerValue, upperValue) async {
-                              final controller =
-                                  WebViewControllerManager().getController();
+                              final controller = inAppWebViewController;
 
                               if (verticalScroll) {
                                 // Vertical
 
-                                await controller!.evaluateJavascript(
+                                await controller.evaluateJavascript(
                                   source: '''
                                   window.scrollTo(0, 0);
                                   var y = getOffset( document.querySelector('[data-page="${lowerValue.floor() - 1}"]') ).top;
@@ -428,7 +407,7 @@ class _ContentPageState extends State<ContentPage> {
                                 );
                               } else {
                                 // Horizontal
-                                await controller!.evaluateJavascript(
+                                await controller.evaluateJavascript(
                                   source: '''
                                           var x = getOffset(document.querySelector('[data-page="${lowerValue.floor() - 1}"]')).left;
                                           horizontal_container.scrollLeft = x;
@@ -523,8 +502,7 @@ class _ContentPageState extends State<ContentPage> {
             children: [
               ZoomTapAnimation(
                   onTap: () {
-                    final controller =
-                        WebViewControllerManager().getController();
+                    final controller = inAppWebViewController;
                     Navigator.push(
                         context,
                         DialogRoute(

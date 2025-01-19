@@ -17,6 +17,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     final themeApp =
         LocalStorage.storage.read('themeApp') ?? const Color(0xFF8D6E63).value;
     bool darkmode = LocalStorage.storage.read('darkmode') ?? true;
+    final fontFamily = LocalStorage.storage.read('fontfamilyApp') ?? 'بهیج';
 
     emit(state.copyWith(
         isLightMode: darkmode,
@@ -24,7 +25,8 @@ class SettingsCubit extends Cubit<SettingsState> {
         lineSpacing: lineSpacing,
         selectedPageColor: themePage,
         axix: axis == 'عمودی' ? Axis.vertical : Axis.horizontal,
-        fontSize: fontSize));
+        fontSize: fontSize,
+        selectedFont: fontFamily));
   }
 
   void changeTheme(String theme) => emit(state.copyWith(selectedTheme: theme));
@@ -38,7 +40,10 @@ class SettingsCubit extends Cubit<SettingsState> {
     LocalStorage.storage.write('lineSpacing', spacing);
   }
 
-  void changeFont(String font) => emit(state.copyWith(selectedFont: font));
+  void changeFont(String font) {
+    emit(state.copyWith(selectedFont: font));
+    LocalStorage.storage.write('fontfamilyApp', font);
+  }
 
   void changeBackgroundColor(Color color) {
     emit(state.copyWith(selectedBackgroundColor: color.value));
