@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Config/theme/theme.dart';
 import 'package:flutter_application_1/Features/Books/presentation/bloc/allbookList/book_all_list_data_cubit.dart';
@@ -12,36 +11,14 @@ import 'package:flutter_application_1/Features/Settings/presentation/bloc/settin
 import 'package:flutter_application_1/Features/Settings/presentation/bloc/settings_state.dart';
 import 'package:flutter_application_1/Features/Splash/presentation/splash.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-WebViewEnvironment? webViewEnvironment;
-final localhostServer = InAppLocalhostServer(documentRoot: 'assets');
-
-void main() async {
+main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
-    final availableVersion = await WebViewEnvironment.getAvailableVersion();
-    assert(availableVersion != null,
-        'Failed to find an installed WebView2 runtime or non-stable Microsoft Edge installation.');
-
-    webViewEnvironment = await WebViewEnvironment.create(
-        settings: WebViewEnvironmentSettings(userDataFolder: 'C:/WebViewData'));
-  }
-
-  if (!kIsWeb &&
-      (defaultTargetPlatform == TargetPlatform.windows ||
-          defaultTargetPlatform == TargetPlatform.linux ||
-          defaultTargetPlatform == TargetPlatform.macOS)) {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  }
-
-  if (!kIsWeb) {
-    await localhostServer.start();
-  }
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
 
   await GetStorage.init();
 
