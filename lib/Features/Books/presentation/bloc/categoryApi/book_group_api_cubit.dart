@@ -13,45 +13,37 @@ class BookGroupApiCubit extends Cubit<BookGroupApiState> {
   DBhelperBookList dBhelperBookList = DBhelperBookList();
 
   fetchData() async {
-    if (!OneTimeCheck.isCheck) {
-      emit(BookGroupApiState(status: LoadingBookGroup()));
+    emit(BookGroupApiState(status: LoadingBookGroup()));
 
-      var connection = await CheckConnection().checkInternetConnection();
-      if (connection) {
-        try {
-          final lastUpdate = await DBhelperLastUpdate().getLastUpdate();
+    var connection = await CheckConnection().checkInternetConnection();
+    if (connection) {
+      try {
+        final lastUpdate = await DBhelperLastUpdate().getLastUpdate();
 
-          final response =
-              await DataListBookProvider().data(lastUpdate.toString());
+        final response =
+            await DataListBookProvider().data(lastUpdate.toString());
 
-          final modelBooks = ModelBooks.fromJson(response);
-          if (modelBooks.books!.isNotEmpty) {
-            for (var element in modelBooks.categories!) {
-              await dBhelperBookList.insertOrUpdateCategory(
-                fatherId: element.id!,
-                title: element.title!,
-                idShow: element.idShow!,
-                bookCount: element.booksCount!,
-              );
-            }
+        final modelBooks = ModelBooks.fromJson(response);
+        if (modelBooks.books!.isNotEmpty) {
+          for (var element in modelBooks.categories!) {
+            await dBhelperBookList.insertOrUpdateCategory(
+              fatherId: element.id!,
+              title: element.title!,
+              idShow: element.idShow!,
+              bookCount: element.booksCount!,
+            );
           }
-
-          emit(BookGroupApiState(status: LoadedDataBookGroup()));
-          OneTimeCheck.isCheck = true;
-          if (modelBooks.lastUpdate!.isNotEmpty &&
-              modelBooks.lastUpdate != '') {
-            await DBhelperLastUpdate().updateLastUpdate(modelBooks.lastUpdate!);
-          }
-        } catch (e) {
-          emit(BookGroupApiState(status: ErrorBookGroup(error: e.toString())));
         }
-      } else {
+
         emit(BookGroupApiState(status: LoadedDataBookGroup()));
+        if (modelBooks.lastUpdate!.isNotEmpty && modelBooks.lastUpdate != '') {
+          await DBhelperLastUpdate().updateLastUpdate(modelBooks.lastUpdate!);
+        }
+      } catch (e) {
+        emit(BookGroupApiState(status: ErrorBookGroup(error: e.toString())));
       }
+    } else {
+      emit(BookGroupApiState(status: LoadedDataBookGroup()));
     }
   }
-}
-
-class OneTimeCheck {
-  static bool isCheck = false;
 }

@@ -47,7 +47,6 @@ class ContentPage extends StatefulWidget {
 class _ContentPageState extends State<ContentPage> {
   String urlSound = '';
   String fontCss = '';
-
   late InAppWebViewController inAppWebViewController;
   @override
   void initState() {
@@ -63,6 +62,7 @@ class _ContentPageState extends State<ContentPage> {
   Future<void> _loadFont() async {
     // testjs = await rootBundle.loadString('assets/web/css/mhebooks.css');
     String fontfamily = 'assets/fonts/Al-Jazeera-Arabic-Regular.woff2';
+
     switch (BlocProvider.of<SettingsCubit>(context).state.selectedFont) {
       case 'نسخ':
         fontfamily = 'assets/fonts/Al-Jazeera-Arabic-Regular.woff2';
@@ -79,14 +79,25 @@ class _ContentPageState extends State<ContentPage> {
     }
     final fontData = await rootBundle.load(fontfamily);
     final fontUri = getFontUriAsBase64(fontData, 'font/opentype');
+    final fontData1 = await rootBundle.load('assets/fonts/abo.ttf');
+    final fontUri1 = getFontUriAsBase64(fontData1, 'font/opentype');
     setState(() {
       fontCss = '''
       @font-face {
-        font-family: "customFont";
+        font-family: "${BlocProvider.of<SettingsCubit>(context).state.selectedFont}";
         src: url("$fontUri") format('woff2');
       }
-      body, p, span, div {
-        font-family: "customFont" !important;
+    @font-face {
+        font-family: "AboThar";
+        src: url("$fontUri1") format('truetype');
+      }
+      .AboThar{
+        font-family: "AboThar" !important;
+        color : blue !important;
+        font-size: 20px;
+      }
+      body, p, div, span {
+        font-family: "${BlocProvider.of<SettingsCubit>(context).state.selectedFont}" !important;
         direction: rtl;
       }
     ''';
@@ -144,6 +155,53 @@ class _ContentPageState extends State<ContentPage> {
               StringBuffer allTextBuffer = StringBuffer();
               snapshot.data!.asMap().forEach((i, item) {
                 String content = item['_text'];
+                content = content.replaceAll(
+                    '''(عليها السلام)''', '''<span class="AboThar"></span>''');
+                content = content.replaceAll(
+                    "(قدس سره)", '''<span class="AboThar"></span>''');
+                content = content.replaceAll("(صلي الله عليه وآله)",
+                    '''<span class="AboThar"></span>''');
+                content = content.replaceAll("(صلي الله عليه و آله)",
+                    '''<span class="AboThar"></span>''');
+                content = content.replaceAll("(صلى الله عليه و آله)",
+                    '''<span class="AboThar"></span>''');
+                content = content.replaceAll("(صلى الله عليه وآله)",
+                    '''<span class="AboThar"></span>''');
+                content = content.replaceAll("(صلي الله عليه وسلم)",
+                    '''<span class="AboThar"></span>''');
+                content = content.replaceAll("(صلی الله علیه و آله و سلم)",
+                    '''<span class="AboThar"></span>''');
+                content = content.replaceAll("(صلى الله عليه وآله وسلم)",
+                    '''<span class="AboThar"></span>''');
+                content = content
+                    .replaceAll("(ص)", '''<span class="AboThar"></span>''');
+
+                content = content.replaceAll(
+                    "(عليه السلام)", '''<span class="AboThar"></span>''');
+                content = content.replaceAll(
+                    "(رحمه الله)", '''<span class="AboThar"></span>''');
+                content = content
+                    .replaceAll("(ع)", '''<span class="AboThar"></span>''');
+                content = content.replaceAll("(عجل الله تعالي و فرجه)",
+                    '''<span class="AboThar"></span>''');
+                content = content.replaceAll(
+                    "(قدس سره)", '''<span class="AboThar"></span>''');
+                content = content.replaceAll("(عجل الله فرجه الشريف)",
+                    '''<span class="AboThar"></span>''');
+                content = content.replaceAll("(عجل الله تعالى و فرجه)",
+                    '''<span class="AboThar"></span>''');
+                content = content.replaceAll(
+                    "(علیه السلام)", '''<span class="AboThar"></span>''');
+                content = content.replaceAll(
+                    "(رضي الله عنه)", '''<span class="AboThar"></span>''');
+                content = content
+                    .replaceAll("﴿", '''<span class="AboThar"></span>''');
+                content = content
+                    .replaceAll("﴾", '''<span class="AboThar"></span>''');
+                content = content
+                    .replaceAll("{", '''<span class="AboThar"></span>''');
+                content = content
+                    .replaceAll("}", '''<span class="AboThar"></span>''');
                 int fav = item['fav'];
 
                 allTextBuffer.write("""
@@ -151,8 +209,7 @@ class _ContentPageState extends State<ContentPage> {
                           ${fav == 0 ? "<div class='book-mark' id='book-mark_$i'></div>" : "<div class='book-mark add_fav' id='book-mark_$i'></div>"}
                           <div class='comment-button' ></div><span class='page-number'>${i + 1}</span>
                           <br>
-                     <div class='$bookText text_style' id='page___$i' style="font-family: 'Bloom' !important; font-size:${cubit.state.fontSize}px !important; line-height:${cubit.state.lineSpacing}px !important;">
-
+                     <div class='$bookText text_style' id='page___$i' style="font-family: '${BlocProvider.of<SettingsCubit>(context).state.selectedFont}' !important; font-size:${cubit.state.fontSize}px !important; line-height:${cubit.state.lineSpacing}px !important;">
                             $content
                           </div>
                         </div>

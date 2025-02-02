@@ -56,7 +56,17 @@ String cssStyle() {
                                   font-family: "Bloom";
                                   src: url('assets/fonts/AGCRegular.ttf') format("truetype");
                                 }
+@font-face {
+  font-family: "AboThar";
+  src: url("./abo.thar.ttf"); /* IE9 Compat Modes */
+}
 
+.AboThar {
+  font-family: "AboThar" !important;
+  color: #4caf50;
+  font-weight: normal !important;
+  font-size: inherit !important;
+}
                                 .pageLoading {
                                   width: 50px;
                                   text-align: center;

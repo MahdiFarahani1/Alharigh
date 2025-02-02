@@ -130,6 +130,17 @@ class DBhelperBookList {
     );
   }
 
+  Future<bool> updateDownloadEditBook(int id, int isDownload) async {
+    final db = await database;
+
+    int count = await db.rawUpdate(
+      'UPDATE books SET downloaded = ? WHERE id = ? AND downloaded = 1',
+      [isDownload, id],
+    );
+
+    return count > 0;
+  }
+
   Future<List<Map<String, dynamic>>> getDownloadedItems() async {
     final db = await database;
 
