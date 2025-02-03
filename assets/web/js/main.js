@@ -1,6 +1,5 @@
 
 var horizontal_container = document.querySelector('.book-container-horizontal');
-
 function search(query) {
   $(".book_text").each(function () {
     var $this = $(this);
@@ -18,7 +17,7 @@ function search(query) {
       );
     }
   });
-  
+
 }
 
 function getOffset(el) {
@@ -31,13 +30,13 @@ function getOffset(el) {
   }
   return { top: _y, left: _x };
 }
-$(function () {
-  console.log("qqeqqqqqqqqqq")
-  $('[data-toggle="tooltip"]').tooltip({
-    placement : 'bottom',
-    html : True
-  })
-})
+// $(function () {
+//   alert("f")
+//   $('[data-toggle="tooltip"]').tooltip({
+//     placement: 'bottom',
+//     html: true
+//   })
+// })
 let custom_slider = document.getElementById("slide_se");
 document.querySelectorAll(".slider111").forEach((elem) => {
   let slider = noUiSlider.create(elem, {
@@ -104,6 +103,50 @@ document.querySelectorAll(".slider111").forEach((elem) => {
 
 
 
+$(function () {
+  console.log("Tooltip initialized");
+  $('[data-toggle="tooltip"]').tooltip({
+    placement: 'bottom',
+    html: true
+  });
+});
+function BookmarkStatus() {
+  var bookmark_elems = $('.book-mark');
+  bookmark_elems.each(function (index) {
+    $(this).click(function () {
+      var item = $(this);
+      if (item.hasClass("add_fav")) {
+        item.removeClass("add_fav");
+      } else {
+        item.addClass("add_fav");
+      }
+      // Send the updated bookmark status back to Flutter
+      if (window.flutter_inappwebview) {
+        window.flutter_inappwebview.callHandler('bookmarkToggled', index);
+      }
+    });
+  });
+}
+BookmarkStatus();
+
+
+
+
+function CommentEvent() {
+  var bookmark_elems = $('.comment-button');
+  bookmark_elems.each(function (index) {
+    $(this).click(function () {
+      var item = $(this);
+      if (!item.hasClass("has-comment")) {
+        item.addClass("has-comment");
+      }
+      if (window.flutter_inappwebview) {
+        window.flutter_inappwebview.callHandler('CommentEvent', index);
+      }
+    });
+  });
+}
+CommentEvent();
 
 
 

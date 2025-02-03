@@ -8,9 +8,7 @@ import 'package:another_xlider/models/trackbar.dart';
 import 'package:color_hex/color_hex.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_application_1/Core/DiWebView/jquery-3.6.4.min.js.dart';
-import 'package:flutter_application_1/Core/DiWebView/main.js.dart';
-import 'package:flutter_application_1/Core/DiWebView/style.dart';
+
 import 'package:flutter_application_1/Core/database/db_helper_Content.dart';
 import 'package:flutter_application_1/Core/database/db_helper_LastUpdate.dart';
 import 'package:flutter_application_1/Core/utils/esay_size.dart';
@@ -153,67 +151,25 @@ class _ContentPageState extends State<ContentPage> {
                   : 'book-container-horizontal';
 
               StringBuffer allTextBuffer = StringBuffer();
-              snapshot.data!.asMap().forEach((i, item) {
-                String content = item['_text'];
-                content = content.replaceAll(
-                    '''(عليها السلام)''', '''<span class="AboThar"></span>''');
-                content = content.replaceAll(
-                    "(قدس سره)", '''<span class="AboThar"></span>''');
-                content = content.replaceAll("(صلي الله عليه وآله)",
-                    '''<span class="AboThar"></span>''');
-                content = content.replaceAll("(صلي الله عليه و آله)",
-                    '''<span class="AboThar"></span>''');
-                content = content.replaceAll("(صلى الله عليه و آله)",
-                    '''<span class="AboThar"></span>''');
-                content = content.replaceAll("(صلى الله عليه وآله)",
-                    '''<span class="AboThar"></span>''');
-                content = content.replaceAll("(صلي الله عليه وسلم)",
-                    '''<span class="AboThar"></span>''');
-                content = content.replaceAll("(صلی الله علیه و آله و سلم)",
-                    '''<span class="AboThar"></span>''');
-                content = content.replaceAll("(صلى الله عليه وآله وسلم)",
-                    '''<span class="AboThar"></span>''');
-                content = content
-                    .replaceAll("(ص)", '''<span class="AboThar"></span>''');
 
-                content = content.replaceAll(
-                    "(عليه السلام)", '''<span class="AboThar"></span>''');
-                content = content.replaceAll(
-                    "(رحمه الله)", '''<span class="AboThar"></span>''');
-                content = content
-                    .replaceAll("(ع)", '''<span class="AboThar"></span>''');
-                content = content.replaceAll("(عجل الله تعالي و فرجه)",
-                    '''<span class="AboThar"></span>''');
-                content = content.replaceAll(
-                    "(قدس سره)", '''<span class="AboThar"></span>''');
-                content = content.replaceAll("(عجل الله فرجه الشريف)",
-                    '''<span class="AboThar"></span>''');
-                content = content.replaceAll("(عجل الله تعالى و فرجه)",
-                    '''<span class="AboThar"></span>''');
-                content = content.replaceAll(
-                    "(علیه السلام)", '''<span class="AboThar"></span>''');
-                content = content.replaceAll(
-                    "(رضي الله عنه)", '''<span class="AboThar"></span>''');
-                content = content
-                    .replaceAll("﴿", '''<span class="AboThar"></span>''');
-                content = content
-                    .replaceAll("﴾", '''<span class="AboThar"></span>''');
-                content = content
-                    .replaceAll("{", '''<span class="AboThar"></span>''');
-                content = content
-                    .replaceAll("}", '''<span class="AboThar"></span>''');
+              int pageCount = 0;
+              snapshot.data!.asMap().forEach((i, item) {
+                if (pageCount >= snapshot.data!.length) return;
+
                 int fav = item['fav'];
 
                 allTextBuffer.write("""
-                        <div class='$bookPage' data-page='$i' style='color: black !important; background-color: ${Color(cubit.state.selectedPageColor).convertToHex.hex} !important;' id='page_$i'>
-                          ${fav == 0 ? "<div class='book-mark' id='book-mark_$i'></div>" : "<div class='book-mark add_fav' id='book-mark_$i'></div>"}
-                          <div class='comment-button' ></div><span class='page-number'>${i + 1}</span>
-                          <br>
-                     <div class='$bookText text_style' id='page___$i' style="font-family: '${BlocProvider.of<SettingsCubit>(context).state.selectedFont}' !important; font-size:${cubit.state.fontSize}px !important; line-height:${cubit.state.lineSpacing}px !important;">
-                            $content
-                          </div>
-                        </div>
-                      """);
+                  <div class='$bookPage' data-page='$i' style='color: black !important; background-color: ${Color(cubit.state.selectedPageColor).convertToHex.hex} !important;' id='page_$i'>
+                    ${fav == 0 ? "<div class='book-mark' id='book-mark_$i'></div>" : "<div class='book-mark add_fav' id='book-mark_$i'></div>"}
+                    <div class='comment-button' ></div><span class='page-number'>${i + 1}</span>
+                    <br>
+                    <div class='$bookText text_style' id='page___$i' style="font-size:${cubit.state.fontSize}px !important; line-height:${cubit.state.lineSpacing}px !important;">
+                        <div style='text-align:center;'><img class='pageLoading' src='asset://images/loader.gif'></div>
+                    </div>
+                  </div>
+                """);
+
+                pageCount++;
               });
 
               String allText = allTextBuffer.toString();
@@ -224,22 +180,20 @@ class _ContentPageState extends State<ContentPage> {
                         <head>
                           <meta charset="UTF-8">
                           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        
-                          <style>
-                          $fontCss
-                          ${cssStyle()}
+                          <link rel="stylesheet" href="asset://web/css/bootstrap.rtl.min.css">
+                          <link rel="stylesheet" href="asset://web/css/mhebooks.css">
+                           <style>
+                           $fontCss
                           </style>
                         </head>
                         <body onload="replaceContent()" dir="rtl">
                     <div class='$bookContainer'>
                           $allText
                       </div>
-                      <script>
-                        ${jQuery()}
-                   
-                        ${mianJs()}
-                       </script>
-                        
+
+                       <script src="asset://web/js/jquery-3.5.1.min.js"></script>
+                       <script src="asset://web/js/bootstrap.bundle.min.js"></script>
+                       <script src="asset://web/js/main.js"></script>
                         </body>
 
                         </html>
@@ -265,7 +219,6 @@ class _ContentPageState extends State<ContentPage> {
                           : EsaySize.height(context) - 110,
                       child: InAppWebView(
                         onWebViewCreated: (controller) async {
-                          print('salam');
                           inAppWebViewController = controller;
 
                           controller.addJavaScriptHandler(
@@ -294,8 +247,113 @@ class _ContentPageState extends State<ContentPage> {
                             },
                           );
                         },
-                        onLoadStop: (controller, url) {
-                          ;
+                        shouldInterceptRequest: (controller, request) async {
+                          String url = request.url.toString();
+                          print("Intercepted URL: $url");
+
+                          if (url.startsWith("asset://")) {
+                            String assetFileName =
+                                url.replaceFirst("asset://", "");
+
+                            try {
+                              ByteData assetData = await rootBundle
+                                  .load("assets/$assetFileName");
+                              Uint8List bytes = assetData.buffer.asUint8List();
+                              String contentType = "text/plain";
+
+                              if (assetFileName.endsWith(".css")) {
+                                contentType = "text/css";
+                              } else if (assetFileName.endsWith(".gif")) {
+                                contentType = "image/gif";
+                              }
+
+                              return WebResourceResponse(
+                                data: bytes,
+                                statusCode: 200,
+                                reasonPhrase: "OK",
+                                contentType: contentType,
+                                headers: {"Access-Control-Allow-Origin": "*"},
+                              );
+                            } catch (e) {
+                              print("Error loading asset: $e");
+                            }
+                          }
+
+                          return null;
+                        },
+                        onLoadStop: (controller, url) async {
+                          if (snapshot.data == null) return;
+
+                          final jsonData = jsonEncode(snapshot.data!
+                              .map((item) => item['_text'])
+                              .toList());
+                          // String content = item['_text'];
+                          // content = content.replaceAll('''(عليها السلام)''',
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll("(قدس سره)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll("(صلي الله عليه وآله)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll("(صلي الله عليه و آله)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll("(صلى الله عليه و آله)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll("(صلى الله عليه وآله)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll("(صلي الله عليه وسلم)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll(
+                          //     "(صلی الله علیه و آله و سلم)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll(
+                          //     "(صلى الله عليه وآله وسلم)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll(
+                          //     "(ص)", '''<span class="AboThar"></span>''');
+
+                          // content = content.replaceAll("(عليه السلام)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll("(رحمه الله)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll(
+                          //     "(ع)", '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll(
+                          //     "(عجل الله تعالي و فرجه)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll("(قدس سره)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll("(عجل الله فرجه الشريف)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll(
+                          //     "(عجل الله تعالى و فرجه)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll("(علیه السلام)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll("(رضي الله عنه)",
+                          //     '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll(
+                          //     "﴿", '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll(
+                          //     "﴾", '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll(
+                          //     "{", '''<span class="AboThar"></span>''');
+                          // content = content.replaceAll(
+                          //     "}", '''<span class="AboThar"></span>''');
+                          await controller.evaluateJavascript(source: '''
+                            (function() {
+                                var data = $jsonData;
+                                for (var i = 0; i < data.length; i++) {
+                                    var element = document.getElementById("page___" + i);
+                                    if (element) {
+                                        element.innerHTML = data[i];
+                                        console.log("Inserted content for page___" + i);
+                                    } else {
+                                        console.log("Element with id page___" + i + " not found.");
+                                    }
+                                }
+                            })();
+                        ''');
+
                           if (verticalScroll) {
                             // Vertical SPY
                             controller.evaluateJavascript(source: r"""
@@ -355,7 +413,7 @@ class _ContentPageState extends State<ContentPage> {
                           );
                         },
                         initialSettings: InAppWebViewSettings(
-                          supportMultipleWindows: true,
+                          useShouldInterceptRequest: true,
                           javaScriptEnabled: true,
                           domStorageEnabled: true,
                           allowFileAccessFromFileURLs: true,
