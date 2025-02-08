@@ -64,7 +64,12 @@ class DBhelperBookList {
 
   Future<List<Map<String, dynamic>>> getGroupBookWithGid(int gid) async {
     final db = await database;
-    return db.query('bookgroups', where: 'fatherId = ?', whereArgs: [gid]);
+    return db.query(
+      'bookgroups',
+      where: 'fatherId = ?',
+      whereArgs: [gid],
+      orderBy: 'id_show ASC',
+    );
   }
 
   Future<List<Map<String, dynamic>>> getGroupBooksContetnt(int fotherId) async {
@@ -95,6 +100,7 @@ class DBhelperBookList {
       "bookgroups",
       where: "fatherId = ?",
       whereArgs: [fatherId],
+      orderBy: 'id_show ASC',
     );
 
     if (result.isNotEmpty) {

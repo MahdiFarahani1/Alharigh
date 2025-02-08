@@ -8,6 +8,7 @@ import 'package:flutter_application_1/Features/ContentBooks/presentation/content
 import 'package:flutter_application_1/Features/Search/presentation/bloc/cubit/search_books_cubit.dart';
 import 'package:flutter_application_1/Features/Search/presentation/bloc/cubit/status_search.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
 // ignore: must_be_immutable
 class SearchPage extends StatefulWidget {
@@ -21,15 +22,23 @@ class SearchPage extends StatefulWidget {
 
 class SearchPageState extends State<SearchPage> {
   int selectedIndex = 0;
-  bool titleBool = true, contentBool = true;
+  bool titleBool = true, contentBool = true, kolBool = true;
   int idbook = 0;
   String bookname = '';
-
+  late List<bool> listbool;
   final TextEditingController _textEditingController = TextEditingController();
   @override
   void initState() {
-    BlocProvider.of<SearchBooksCubit>(context).searchData('b${idbook}.sqlite',
-        widget.searchQuery, titleBool, contentBool, idbook);
+    BlocProvider.of<SearchBooksCubit>(context).searchData(
+        'b$idbook.sqlite', widget.searchQuery, titleBool, contentBool, idbook);
+    DBhelperBookList().getDownloadedItems().then(
+      (value) {
+        listbool = List.generate(
+          value.length,
+          (index) => false,
+        );
+      },
+    );
 
     super.initState();
   }
@@ -66,19 +75,17 @@ class SearchPageState extends State<SearchPage> {
             Row(
               children: [
                 Expanded(
-                  child: StatefulBuilder(builder: (context, setStateTitle) {
-                    return CheckboxListTile(
-                      title: const Text("العنوان"),
-                      value: titleBool,
-                      onChanged: (newValue) {
-                        setStateTitle(
-                          () => titleBool = newValue!,
-                        );
-                      },
-                      contentPadding: EdgeInsets.zero,
-                      controlAffinity: ListTileControlAffinity.leading,
-                    );
-                  }),
+                  child: CheckboxListTile(
+                    title: const Text("العنوان"),
+                    value: titleBool,
+                    onChanged: (newValue) {
+                      setState(() {
+                        titleBool = newValue!;
+                      });
+                    },
+                    contentPadding: EdgeInsets.zero,
+                    controlAffinity: ListTileControlAffinity.leading,
+                  ),
                 ),
                 Expanded(
                   child: StatefulBuilder(builder: (context, setStateContent) {
@@ -99,14 +106,24 @@ class SearchPageState extends State<SearchPage> {
               controller: _textEditingController,
               onSubmitted: (value) {
                 BlocProvider.of<SearchBooksCubit>(context).searchData(
-                    'b${idbook}.sqlite',
+                    'b$idbook.sqlite',
                     _textEditingController.text,
                     titleBool,
                     contentBool,
                     idbook);
               },
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search),
+              decoration: InputDecoration(
+                prefixIcon: ZoomTapAnimation(
+                    onTap: () {
+                      BlocProvider.of<SearchBooksCubit>(context).searchData(
+                          'b$idbook.sqlite',
+                          _textEditingController.text,
+                          titleBool,
+                          contentBool,
+                          idbook);
+                    },
+                    child: const Card(
+                        color: Colors.black12, child: Icon(Icons.search))),
               ),
               onChanged: (value) {
                 setState(() {
@@ -124,54 +141,110 @@ class SearchPageState extends State<SearchPage> {
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Text("هیچ کتابی یافت نشد");
                 } else {
-                  return SizedBox(
+                  return Container(
+                    margin: const EdgeInsets.all(8),
                     width: EsaySize.width(context),
-                    height: EsaySize.height(context) / 3,
-                    child: StatefulBuilder(builder: (context, setStateWheel) {
-                      return ListWheelScrollView.useDelegate(
-                        itemExtent: 50.0,
-                        onSelectedItemChanged: (value) {
-                          setStateWheel(
-                            () {
-                              selectedIndex = value;
-                              if (value == 0) {
-                                idbook = 0;
-                                bookname = '';
-                              } else {
-                                idbook = snapshot.data![value - 1]['id'];
-                                bookname = snapshot.data![value - 1]['title'];
-                              }
-                            },
-                          );
-                        },
-                        childDelegate: ListWheelChildBuilderDelegate(
-                          builder: (context, index) {
-                            if (index == 0) {
-                              return Text(
-                                'الكل',
-                                style: TextStyle(
-                                    color: selectedIndex == index
-                                        ? Colors.black
-                                        : Colors.black12),
-                              );
-                            }
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.black12,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: StatefulBuilder(
+                      builder: (context, setStateWheel) {
+                        return ListTile(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Directionality(
+                                  textDirection: TextDirection.rtl,
+                                  child: AlertDialog(
+                                    title: const Text('انتخاب کتگوری'),
+                                    content: SizedBox(
+                                      width: double.maxFinite,
+                                      height: 300,
+                                      child: StatefulBuilder(
+                                        builder: (context, setStateDialog) {
+                                          return ListView.builder(
+                                            itemCount:
+                                                snapshot.data!.length + 1,
+                                            itemBuilder: (context, index) {
+                                              if (index == 0) {
+                                                return CheckboxListTile(
+                                                  value: kolBool,
+                                                  title: const Text('الكل',
+                                                      style: TextStyle(
+                                                          color: Colors.black)),
+                                                  onChanged: (bool? value) {
+                                                    setState(() {
+                                                      kolBool = value!;
+                                                      idbook = 0;
+                                                      bookname = '';
+                                                      if (kolBool) {
+                                                        listbool =
+                                                            List.generate(
+                                                                snapshot.data!
+                                                                    .length,
+                                                                (_) => false);
+                                                      }
+                                                    });
+                                                    setStateDialog(() {});
+                                                  },
+                                                );
+                                              }
 
-                            var e = snapshot.data![index - 1];
-                            bool havePart = e['joz'] != 0;
+                                              var e = snapshot.data![index - 1];
+                                              bool havePart = e['joz'] != 0;
 
-                            return Text(
-                                havePart
-                                    ? '${e['title']} الجزء ${e['joz']}'
-                                    : '${e['title']}',
-                                style: TextStyle(
-                                    color: selectedIndex == index
-                                        ? Colors.black
-                                        : Colors.black12));
+                                              return CheckboxListTile(
+                                                value: listbool[index - 1],
+                                                title: Text(
+                                                  havePart
+                                                      ? '${e['title']} الجزء ${e['joz']}'
+                                                      : '${e['title']}',
+                                                  style: const TextStyle(
+                                                      color: Colors.black),
+                                                ),
+                                                onChanged: (bool? value) {
+                                                  setState(() {
+                                                    listbool = List.generate(
+                                                        snapshot.data!.length,
+                                                        (i) {
+                                                      if (i == index - 1) {
+                                                        return true;
+                                                      } else {
+                                                        return false;
+                                                      }
+                                                    });
+
+                                                    kolBool = false;
+                                                    idbook = snapshot
+                                                        .data![index - 1]['id'];
+                                                    bookname = snapshot
+                                                            .data![index - 1]
+                                                        ['title'];
+                                                  });
+                                                  setStateDialog(() {});
+                                                },
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
                           },
-                          childCount: snapshot.data!.length + 1,
-                        ),
-                      );
-                    }),
+                          title: const Text('کتگوری سرچ'),
+                          trailing: const Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.black,
+                          ),
+                        );
+                      },
+                    ),
                   );
                 }
               },
@@ -209,7 +282,8 @@ class SearchPageState extends State<SearchPage> {
                                           MaterialPageRoute(
                                             builder: (context) => ContentPage(
                                                 soundUrl: data[index]
-                                                    ['sound_url'],
+                                                        ['sound_url'] ??
+                                                    '',
                                                 id: data[index]['id'],
                                                 bookName: data[index]['title'],
                                                 scrollPosetion: 1),
@@ -220,7 +294,8 @@ class SearchPageState extends State<SearchPage> {
                                           MaterialPageRoute(
                                             builder: (context) => ContentPage(
                                                 soundUrl: data[index]
-                                                    ['sound_url'],
+                                                        ['sound_url'] ??
+                                                    '',
                                                 id: idbook,
                                                 bookName: bookname,
                                                 scrollPosetion: double.parse(

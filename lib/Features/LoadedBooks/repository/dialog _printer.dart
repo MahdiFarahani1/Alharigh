@@ -73,7 +73,7 @@ void showPrintDialog(
                     printText(selectedPages);
                     Navigator.pop(context);
                   },
-                  child: const Text('چاپ کن'),
+                  child: const Text('طباعة'),
                 ),
               ],
             ),
